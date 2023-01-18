@@ -1,15 +1,16 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect } from "react";
 import * as THREE from "three";
-import { useXR } from "@react-three/xr";
-import { Environment, PerspectiveCamera } from "@react-three/drei";
+import {
+  Environment,
+  OrbitControls,
+  PerspectiveCamera,
+} from "@react-three/drei";
 
 import { useControls, folder } from "leva";
 
-import Gamepads from "./Gamepads";
-
 function Layout({
   children,
-  bg = "#393939",
+  bg = "#2d334b",
 }: {
   children?: ReactNode;
   bg?: string;
@@ -21,15 +22,12 @@ function Layout({
         grid: true,
         axes: true,
         camera: folder({
-          fov: 50,
+          fov: 40,
           player: { value: [7, 4.0, 21.0], step: 0.1 }, // ~= position of the camera (the player holds the camera)
           lookAt: {
             value: [0, 0, 0],
             step: 0.1,
           },
-        }),
-        gamepads: folder({
-          nipples: true,
         }),
       },
       { collapsed: true }
@@ -39,9 +37,8 @@ function Layout({
 
   return (
     <>
-      <Camera position={gui.player} lookAt={gui.lookAt} fov={gui.fov} />
-
-      <Gamepads nipples={gui.nipples} />
+      <PerspectiveCamera position={gui.player} fov={gui.fov} makeDefault />
+      <OrbitControls />
 
       <Environment background>
         <mesh scale={100}>
@@ -64,38 +61,6 @@ function Layout({
       {gui.axes && <axesHelper args={[5]} />}
 
       {children}
-    </>
-  );
-}
-
-function Camera({
-  position,
-  lookAt,
-  fov,
-}: {
-  position: [number, number, number];
-  lookAt: [number, number, number];
-  fov: number;
-}) {
-  const cameraRef = useRef<THREE.Camera>(); // non-XR camera
-
-  const player = useXR((state) => state.player);
-
-  //
-  //  🤳 Camera (player position + cam lookAt rotation)
-  //
-
-  useEffect(() => {
-    player.position.set(...position);
-  }, [player, position]);
-
-  // useFrame(() => {
-  //   cameraRef.current?.lookAt(...lookAt);
-  // });
-
-  return (
-    <>
-      <PerspectiveCamera ref={cameraRef} fov={fov} makeDefault />
     </>
   );
 }

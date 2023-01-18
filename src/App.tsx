@@ -1,44 +1,20 @@
-import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import { Canvas, useThree } from "@react-three/fiber";
-import { useKeyboardControls } from "@react-three/drei";
-import { Physics, Debug } from "@react-three/rapier";
-import { XR, Controllers, Hands, VRButton, Interactive } from "@react-three/xr";
+import { Canvas } from "@react-three/fiber";
 
 import Layout from "./Layout";
-import Cube from "./components/Cube";
-import Ball from "./components/Ball";
 import Ground from "./components/Ground";
-import { Rope } from "./components/Rope";
+import { Float, Html, Sparkles, Stage } from "@react-three/drei";
+
+import { Model as Iphone } from "./components/Iphone";
+import { useRef } from "react";
 
 function App() {
   return (
     <Styled>
-      <VRButton />
-      <Canvas
-        shadows
-        // camera={{
-        //   position: [0, 15, 5],
-        //   fov: 55,
-        // }}
-        //
-      >
-        <XR>
-          <Controllers />
-          <Hands />
-
-          <Physics
-            gravity={[0, -60, 0]}
-            // timeStep={1 / 60}
-            //
-          >
-            <Debug />
-
-            <Layout>
-              <Scene />
-            </Layout>
-          </Physics>
-        </XR>
+      <Canvas>
+        <Layout>
+          <Scene />
+        </Layout>
       </Canvas>
     </Styled>
   );
@@ -50,35 +26,27 @@ export const Styled = styled.div`
 export default App;
 
 function Scene() {
-  const [clr, setClr] = useState<string | undefined>(undefined);
-  //
-  // ESC key to exit XR
-  //
-
-  const gl = useThree((state) => state.gl);
-  // gl.xr.setFramebufferScaleFactor(2.0);
-
-  const escPressed = useKeyboardControls((state) => state.esc);
-  useEffect(() => {
-    gl.xr.getSession()?.end(); // https://stackoverflow.com/a/71566927/133327
-  }, [escPressed, gl.xr]);
-
   return (
     <>
-      <Interactive
-        onHover={(e) => {
-          console.log("hover");
-          setClr("brown");
-        }}
-        onBlur={(e) => setClr(undefined)}
+      {/* <Stage
+        adjustCamera={1.75}
+        intensity={0.5}
+        shadows="contact"
+        environment="city"
+      > */}
+
+      <Float
+        speed={1} // Animation speed, defaults to 1
+        rotationIntensity={0.5} // XYZ rotation intensity, defaults to 1
+        floatIntensity={1} // Up/down float intensity, works like a multiplier with floatingRange,defaults to 1
+        // floatingRange={[1, 10]} // Range of y-axis values the object will float within, defaults to [-0.1,0.1]
       >
-        <Cube position-y={1} color={clr} />
-      </Interactive>
-      <Ball />
+        <Iphone scale={40} rotation-y={Math.PI} rotation-x={-Math.PI / 12} />
+      </Float>
 
-      <Rope length={5} position={[3, 1, 0]} />
+      {/* <Ground /> */}
 
-      <Ground />
+      {/* </Stage> */}
     </>
   );
 }
