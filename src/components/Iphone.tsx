@@ -231,9 +231,9 @@ export function Model(props: ModelProps) {
                 geometry={nodes.screen.geometry}
                 material={mat}
                 ref={screenRef}
-                onClick={() => {
-                  videoRef.current?.play();
-                }}
+                // onClick={() => {
+                //   videoRef.current?.play();
+                // }}
               />
               <mesh
                 castShadow

@@ -82,7 +82,7 @@ function Layout({
       {/* {gui.grid && <gridHelper args={[30, 30, 30]} position-y=".01" />} */}
       <Grid position={[0, -0.01, 0]} args={gridSize} {...gridConfig} />
       {/* <Shadows /> */}
-      {gui.axes && <axesHelper args={[5]} />}
+      {/* {gui.axes && <axesHelper args={[5]} />} */}
 
       {children}
     </>
