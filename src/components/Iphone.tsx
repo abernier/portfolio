@@ -112,10 +112,10 @@ type GLTFResult = GLTF & {
 };
 
 type ModelProps = JSX.IntrinsicElements["group"] & {
-  // video: RefObject<HTMLVideoElement>;
+  children?: React.ReactNode;
 };
 
-export function Model(props: ModelProps) {
+export function Model({ children, ...props }: ModelProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   globalThis.videoRef = videoRef;
 
@@ -179,9 +179,7 @@ export function Model(props: ModelProps) {
       <group {...props} dispose={null}>
         <group rotation={[-Math.PI / 2, 0, 0]}>
           <group rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
-            {/* <group position-y={10} position-z={-1}>
-              <Sparkles count={20} scale={[15, 15, 1]} size={2} />
-            </group> */}
+            {children}
             <>
               <mesh
                 castShadow

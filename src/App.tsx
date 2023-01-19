@@ -13,7 +13,9 @@ import { useEffect, useRef } from "react";
 function App() {
   return (
     <Styled>
-      <Canvas>
+      <Canvas
+      // shadows
+      >
         <Layout>
           <Scene />
         </Layout>
@@ -70,22 +72,14 @@ function Scene() {
         floatIntensity={1} // Up/down float intensity, works like a multiplier with floatingRange,defaults to 1
         // floatingRange={[1, 10]} // Range of y-axis values the object will float within, defaults to [-0.1,0.1]
       > */}
-      {/* <Stage
-        adjustCamera={1.25}
-        intensity={0.125}
-        shadows="contact"
-        environment="city"
-      > */}
       <Iphone scale={40} rotation-y={Math.PI} rotation-x={-Math.PI / 12} />
 
-      {/* <Ground /> */}
-      {/* </Stage> */}
       <Sparkles
         count={20}
         scale={[5, 8, 1]}
-        size={2}
+        size={4}
         rotation-x={-Math.PI / 12}
-        position-z={0}
+        position-y={4}
       />
       {/* </Float> */}
     </>
