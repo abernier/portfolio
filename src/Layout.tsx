@@ -1,5 +1,6 @@
 import { memo, ReactNode, useEffect } from "react";
 import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
 import {
   AccumulativeShadows,
   Environment,
@@ -11,6 +12,10 @@ import {
 
 import { useControls, folder } from "leva";
 
+import gsap from "gsap";
+
+gsap.ticker.remove(gsap.updateRoot); // https://greensock.com/docs/v3/GSAP/gsap.updateRoot()
+
 function Layout({
   children,
   bg = "#2d334b",
@@ -18,6 +23,11 @@ function Layout({
   children?: ReactNode;
   bg?: string;
 }) {
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    gsap.updateRoot(t); // seconds
+  });
+
   const [gui, setGui] = useControls(() => ({
     Layout: folder(
       {
@@ -26,7 +36,7 @@ function Layout({
         axes: true,
         camera: folder({
           fov: 20,
-          player: { value: [7, 4.0, 21.0], step: 0.1 }, // ~= position of the camera (the player holds the camera)
+          position: { value: [7, 4.0, 21.0], step: 0.1 },
           lookAt: {
             value: [0, 0, 0],
             step: 0.1,
@@ -39,7 +49,7 @@ function Layout({
   // console.log("gui=", gui);
 
   const { gridSize, ...gridConfig } = useControls({
-    Grid: folder(
+    "Layout.Grid": folder(
       {
         gridSize: [10.5, 10.5],
         cellSize: { value: 0.6, min: 0, max: 10, step: 0.1 },
@@ -59,7 +69,7 @@ function Layout({
 
   return (
     <>
-      <PerspectiveCamera position={gui.player} fov={gui.fov} makeDefault />
+      <PerspectiveCamera position={gui.position} fov={gui.fov} makeDefault />
       <OrbitControls />
 
       <Environment background>
@@ -80,9 +90,16 @@ function Layout({
       <ambientLight intensity={0.2} />
 
       {/* {gui.grid && <gridHelper args={[30, 30, 30]} position-y=".01" />} */}
-      <Grid position={[0, -3.15, 0]} args={gridSize} {...gridConfig} />
+      {gui.grid && (
+        <Grid
+          // position={[0, -3.15, 0]}
+          args={gridSize}
+          {...gridConfig}
+          //
+        />
+      )}
       {/* <Shadows /> */}
-      {/* {gui.axes && <axesHelper args={[5]} />} */}
+      {gui.axes && <axesHelper args={[5]} />}
 
       {children}
     </>
