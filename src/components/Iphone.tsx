@@ -156,6 +156,7 @@ export function Model(props: ModelProps) {
     video.autoplay = true;
     video.loop = true;
     video.muted = true;
+    video.playsInline = true;
 
     videoRef.current = video;
 
