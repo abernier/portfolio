@@ -44,6 +44,8 @@ function Layout({
         bg,
         grid: true,
         axes: true,
+        lerpTarget: true,
+        lerpPosition: true,
         camera: folder({
           fov: 20,
           position: {
@@ -81,13 +83,17 @@ function Layout({
   });
 
   useFrame(({ camera }) => {
-    // console.log("looking at", gui.target, orbitControlsRef.current.target);
-    orbitControlsRef.current?.target.lerp(
-      new THREE.Vector3(...gui.target),
-      0.05
-    );
+    if (gui.lerpTarget) {
+      // console.log("looking at", gui.target, orbitControlsRef.current.target);
+      orbitControlsRef.current?.target.lerp(
+        new THREE.Vector3(...gui.target),
+        0.05
+      );
+    }
 
-    camera.position.lerp(new THREE.Vector3(...gui.position), 0.01);
+    if (gui.lerpPosition) {
+      camera.position.lerp(new THREE.Vector3(...gui.position), 0.01);
+    }
   });
 
   return (
