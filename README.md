@@ -1,4 +1,4 @@
-Try on: [Codespace](https://github.com/codespaces/new?template_repository=abernier%2Ftpl-react-three) | [StackBlitz](https://stackblitz.com/github/abernier/tpl-react-three)
+Try on: [Codespace](https://github.com/codespaces/new?template_repository=abernier%2Fportfolio) | [StackBlitz](https://stackblitz.com/github/abernier/portfolio)
 
 # INSTALL
 
@@ -15,6 +15,10 @@ $ npm ci
 ```sh
 $ npm run dev
 ```
+
+# Assets
+
+Some heavy mp4 assets are stored into [abernier-portfolio](https://console.cloud.google.com/storage/browser/abernier-portfolio;tab=objects?forceOnBucketsSortingFiltering=false&project=portfolio-375123&supportedpurview=project&prefix=&forceOnObjectsSortingFiltering=false) Google Cloud Storage bucket.
 
 # Build
 
