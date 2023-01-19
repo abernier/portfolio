@@ -25,7 +25,7 @@ function Layout({
         grid: true,
         axes: true,
         camera: folder({
-          fov: 40,
+          fov: 20,
           player: { value: [7, 4.0, 21.0], step: 0.1 }, // ~= position of the camera (the player holds the camera)
           lookAt: {
             value: [0, 0, 0],
@@ -80,7 +80,7 @@ function Layout({
       <ambientLight intensity={0.2} />
 
       {/* {gui.grid && <gridHelper args={[30, 30, 30]} position-y=".01" />} */}
-      <Grid position={[0, -0.01, 0]} args={gridSize} {...gridConfig} />
+      <Grid position={[0, -3.15, 0]} args={gridSize} {...gridConfig} />
       {/* <Shadows /> */}
       {/* {gui.axes && <axesHelper args={[5]} />} */}
 
