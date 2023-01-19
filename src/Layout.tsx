@@ -1,6 +1,6 @@
-import { memo, ReactNode, useEffect } from "react";
+import { memo, ReactNode, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import {
   AccumulativeShadows,
   Environment,
@@ -10,11 +10,18 @@ import {
   RandomizedLight,
 } from "@react-three/drei";
 
+import { OrbitControls as OrbitControlsImpl } from "three-stdlib"; // https://github.com/pmndrs/drei/discussions/719
+
 import { useControls, folder } from "leva";
 
 import gsap from "gsap";
-
 gsap.ticker.remove(gsap.updateRoot); // https://greensock.com/docs/v3/GSAP/gsap.updateRoot()
+
+type ArrayVec3 = [number, number, number];
+const INITIALS = {
+  position: [7, 4.0, 21.0] as ArrayVec3,
+  target: [0, 3, 0] as ArrayVec3,
+};
 
 function Layout({
   children,
@@ -23,10 +30,13 @@ function Layout({
   children?: ReactNode;
   bg?: string;
 }) {
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    gsap.updateRoot(t); // seconds
-  });
+  const orbitControlsRef = useRef<OrbitControlsImpl>(null);
+  globalThis.orbitControlsRef = orbitControlsRef;
+
+  // const [position] = useState(new THREE.Vector3());
+  // const [target] = useState(new THREE.Vector3());
+
+  useFrame(({ clock }) => gsap.updateRoot(clock.getElapsedTime()));
 
   const [gui, setGui] = useControls(() => ({
     Layout: folder(
@@ -36,9 +46,12 @@ function Layout({
         axes: true,
         camera: folder({
           fov: 20,
-          position: { value: [7, 4.0, 21.0], step: 0.1 },
-          lookAt: {
-            value: [0, 0, 0],
+          position: {
+            value: INITIALS.position,
+            step: 0.1,
+          },
+          target: {
+            value: INITIALS.target,
             step: 0.1,
           },
         }),
@@ -67,10 +80,25 @@ function Layout({
     ),
   });
 
+  useFrame(({ camera }) => {
+    // console.log("looking at", gui.target, orbitControlsRef.current.target);
+    orbitControlsRef.current?.target.lerp(
+      new THREE.Vector3(...gui.target),
+      0.05
+    );
+
+    camera.position.lerp(new THREE.Vector3(...gui.position), 0.01);
+  });
+
   return (
     <>
-      <PerspectiveCamera position={gui.position} fov={gui.fov} makeDefault />
-      <OrbitControls />
+      <PerspectiveCamera
+        fov={gui.fov}
+        makeDefault
+        position={INITIALS.position} // initial camera position
+        //
+      />
+      <OrbitControls target={INITIALS.target} ref={orbitControlsRef} />
 
       <Environment background>
         <mesh scale={100}>
