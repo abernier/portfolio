@@ -135,7 +135,7 @@ function Layout({
         />
       )}
 
-      {/* <Ground /> */}
+      <Ground size={10} circle />
       <ContactShadows
         frames={1}
         opacity={1}

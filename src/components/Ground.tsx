@@ -1,7 +1,13 @@
 import { getUnit } from "gsap";
 import { useControls } from "leva";
 
-function Ground() {
+function Ground({
+  size = 10,
+  circle = false,
+}: {
+  size?: number;
+  circle?: boolean;
+}) {
   const gui = useControls({
     color: "#999",
   });
@@ -11,8 +17,12 @@ function Ground() {
       position-y={-0.02}
       rotation={[-Math.PI / 2, 0, 0]}
     >
-      {/* <boxGeometry args={[100, 100, 0.1]} /> */}
-      <circleGeometry args={[10, 32]} />
+      {circle ? (
+        <circleGeometry args={[size, 32]} />
+      ) : (
+        <boxGeometry args={[size, size, 0.1]} />
+      )}
+
       <meshStandardMaterial
         color={gui.color}
         // transparent
