@@ -1,20 +1,20 @@
 import { ReactNode, useRef } from "react";
 import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, extend, useThree } from "@react-three/fiber";
 import {
   ContactShadows,
   Environment,
   Grid,
-  OrbitControls,
   PerspectiveCamera,
 } from "@react-three/drei";
 
-import { OrbitControls as OrbitControlsImpl } from "three-stdlib"; // https://github.com/pmndrs/drei/discussions/719
-
 import { useControls, folder } from "leva";
 
+import { CameraControls } from "./components/CameraControls";
 import gsap from "gsap";
+
 import Ground from "./components/Ground";
+
 gsap.ticker.remove(gsap.updateRoot); // https://greensock.com/docs/v3/GSAP/gsap.updateRoot()
 
 type ArrayVec3 = [number, number, number];
@@ -30,11 +30,8 @@ function Layout({
   children?: ReactNode;
   bg?: string;
 }) {
-  const orbitControlsRef = useRef<OrbitControlsImpl>(null);
-  globalThis.orbitControlsRef = orbitControlsRef;
-
-  // const [position] = useState(new THREE.Vector3());
-  // const [target] = useState(new THREE.Vector3());
+  const cameraControlsRef = useRef<CameraControls | null>(null);
+  globalThis.cameraControlsRef = cameraControlsRef;
 
   useFrame(({ clock }) => gsap.updateRoot(clock.getElapsedTime()));
 
@@ -82,19 +79,19 @@ function Layout({
     ),
   });
 
-  useFrame(({ camera }) => {
-    if (gui.lerpTarget) {
-      // console.log("looking at", gui.target, orbitControlsRef.current.target);
-      orbitControlsRef.current?.target.lerp(
-        new THREE.Vector3(...gui.target),
-        0.05
-      );
-    }
+  // useFrame(({ camera }) => {
+  //   if (gui.lerpTarget) {
+  //     // console.log("looking at", gui.target, orbitControlsRef.current.target);
+  //     orbitControlsRef.current?.target.lerp(
+  //       new THREE.Vector3(...gui.target),
+  //       0.005
+  //     );
+  //   }
 
-    if (gui.lerpPosition) {
-      camera.position.lerp(new THREE.Vector3(...gui.position), 0.01);
-    }
-  });
+  //   if (gui.lerpPosition) {
+  //     camera.position.lerp(new THREE.Vector3(...gui.position), 0.005);
+  //   }
+  // });
 
   return (
     <>
@@ -104,7 +101,7 @@ function Layout({
         position={INITIALS.position} // initial camera position
         //
       />
-      <OrbitControls target={INITIALS.target} ref={orbitControlsRef} />
+      <CameraControls ref={cameraControlsRef} />
 
       <Environment background>
         <mesh scale={100}>
