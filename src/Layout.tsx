@@ -6,11 +6,11 @@ import {
   Environment,
   Grid,
   PerspectiveCamera,
+  CameraControls,
 } from "@react-three/drei";
 
 import { useControls, folder } from "leva";
 
-import { CameraControls } from "./components/CameraControls";
 import gsap from "gsap";
 
 import Ground from "./components/Ground";

@@ -1,4 +1,3 @@
-import { getUnit } from "gsap";
 import { useControls } from "leva";
 
 function Ground({
