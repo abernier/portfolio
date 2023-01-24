@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from "react";
+import { ReactNode, useCallback, useRef } from "react";
 import * as THREE from "three";
 import { useFrame, extend, useThree } from "@react-three/fiber";
 import {
@@ -93,6 +93,11 @@ function Layout({
   //   }
   // });
 
+  const cameraControlsCallbackRef = useCallback((instance: CameraControls) => {
+    cameraControlsRef.current = instance;
+    instance?.setTarget(...INITIALS.target);
+  }, []);
+
   return (
     <>
       <PerspectiveCamera
@@ -101,15 +106,7 @@ function Layout({
         position={INITIALS.position} // initial camera position
         //
       />
-      <CameraControls
-        ref={(instance) => {
-          if (!instance) return;
-
-          cameraControlsRef.current = instance;
-
-          instance.setTarget(...INITIALS.target); // initial camera target
-        }}
-      />
+      <CameraControls ref={cameraControlsCallbackRef} />
 
       <Environment background>
         <mesh scale={100}>
