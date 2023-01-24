@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import styled from "@emotion/styled";
 import { Canvas, useThree } from "@react-three/fiber";
 
@@ -7,8 +8,10 @@ import { Bounds, Float, Html, Sparkles, Stage } from "@react-three/drei";
 
 import gsap from "gsap";
 
-import { Model as Iphone } from "./components/Iphone";
+import Iphone from "./components/Iphone";
 import { useEffect, useRef } from "react";
+
+globalThis.THREE = THREE;
 
 function App() {
   return (
