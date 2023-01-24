@@ -64,13 +64,13 @@ function Layout({
     "Layout.Grid": folder(
       {
         gridSize: [10.5, 10.5],
-        cellSize: { value: 0.6, min: 0, max: 10, step: 0.1 },
+        cellSize: { value: 0.5, min: 0, max: 10, step: 0.1 },
         cellThickness: { value: 0.5, min: 0, max: 5, step: 0.1 },
         cellColor: "#6f6f6f",
-        sectionSize: { value: 3.3, min: 0, max: 10, step: 0.1 },
+        sectionSize: { value: 5, min: 0, max: 10, step: 0.1 },
         sectionThickness: { value: 1, min: 0, max: 5, step: 0.1 },
         sectionColor: "#6f5ead",
-        fadeDistance: { value: 75, min: 0, max: 100, step: 1 },
+        fadeDistance: { value: 50, min: 0, max: 100, step: 1 },
         fadeStrength: { value: 1, min: 0, max: 1, step: 0.1 },
         followCamera: false,
         infiniteGrid: true,
@@ -150,7 +150,7 @@ function Layout({
         resolution={256}
         color="#000000"
       />
-      {gui.axes && <axesHelper args={[5]} />}
+      {/* {gui.axes && <axesHelper args={[5]} />} */}
 
       {children}
     </>

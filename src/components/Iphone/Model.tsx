@@ -110,9 +110,10 @@ type GLTFResult = GLTF & {
 
 type ModelProps = JSX.IntrinsicElements["group"] & {
   children?: React.ReactNode;
+  screenTexture?: THREE.Texture;
 };
 
-export function Model({ children, ...props }: ModelProps) {
+export function Model({ children, screenTexture, ...props }: ModelProps) {
   const { nodes, materials } = useGLTF(glbUrl) as unknown as GLTFResult;
 
   return (
@@ -124,9 +125,9 @@ export function Model({ children, ...props }: ModelProps) {
               castShadow
               receiveShadow
               geometry={nodes.screen.geometry}
-              // material={mat}
+              // material={nodes.screen.material}
             >
-              {/* <meshStandardMaterial map={tex} /> */}
+              <meshStandardMaterial map={screenTexture} />
               {children}
             </mesh>
             <>

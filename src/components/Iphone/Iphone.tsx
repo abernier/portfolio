@@ -20,7 +20,7 @@ export function Iphone({
   //
   // VideoTexture map
   //
-  const map = useMemo(() => {
+  const videoTexture = useMemo(() => {
     const video = document.createElement("video");
     video.src = src;
     video.crossOrigin = "anonymous";
@@ -69,9 +69,7 @@ export function Iphone({
 
   return (
     <>
-      <Model {...props}>
-        <meshStandardMaterial map={map} />
-      </Model>
+      <Model screenTexture={videoTexture} {...props} />
     </>
   );
 }
