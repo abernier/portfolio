@@ -101,7 +101,15 @@ function Layout({
         position={INITIALS.position} // initial camera position
         //
       />
-      <CameraControls ref={cameraControlsRef} />
+      <CameraControls
+        ref={(instance) => {
+          if (!instance) return;
+
+          cameraControlsRef.current = instance;
+
+          instance.setTarget(...INITIALS.target); // initial camera target
+        }}
+      />
 
       <Environment background>
         <mesh scale={100}>
