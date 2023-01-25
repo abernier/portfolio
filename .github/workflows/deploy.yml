@@ -33,6 +33,8 @@ jobs:
           node-version: "16"
           cache: "npm"
       - run: npm ci
+        env:
+          GSAP_NPM_TOKEN: ${{ secrets.GSAP_NPM_TOKEN }}
       - run: npx vite build --base="/$REPONAME/"
         env:
           USERNAME: ${{ github.repository_owner }}
