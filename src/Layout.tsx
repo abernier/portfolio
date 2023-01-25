@@ -1,21 +1,16 @@
-import { ReactNode, useCallback, useRef } from "react";
 import * as THREE from "three";
-import { useFrame, extend, useThree } from "@react-three/fiber";
+import { ReactNode } from "react";
 import {
   ContactShadows,
-  Environment,
   Grid,
   PerspectiveCamera,
-  CameraControls,
+  Environment,
 } from "@react-three/drei";
 
 import { useControls, folder } from "leva";
 
-import gsap from "gsap";
-
 import Ground from "./components/Ground";
-
-gsap.ticker.remove(gsap.updateRoot); // https://greensock.com/docs/v3/GSAP/gsap.updateRoot()
+// import Environment from "./Environment";
 
 type ArrayVec3 = [number, number, number];
 const INITIALS = {
@@ -23,26 +18,18 @@ const INITIALS = {
   target: [0, 3, 0] as ArrayVec3,
 };
 
-function Layout({
-  children,
-  bg = "#2d334b",
-}: {
+type LayoutProps = {
   children?: ReactNode;
   bg?: string;
-}) {
-  const cameraControlsRef = useRef<CameraControls | null>(null);
-  globalThis.cameraControlsRef = cameraControlsRef;
+};
 
-  useFrame(({ clock }) => gsap.updateRoot(clock.getElapsedTime()));
-
+const Layout = ({ children, bg = "#2d334b" }: LayoutProps) => {
   const [gui, setGui] = useControls(() => ({
     Layout: folder(
       {
         bg,
         grid: true,
         axes: true,
-        lerpTarget: true,
-        lerpPosition: true,
         camera: folder({
           fov: 20,
           position: {
@@ -79,25 +66,6 @@ function Layout({
     ),
   });
 
-  // useFrame(({ camera }) => {
-  //   if (gui.lerpTarget) {
-  //     // console.log("looking at", gui.target, orbitControlsRef.current.target);
-  //     orbitControlsRef.current?.target.lerp(
-  //       new THREE.Vector3(...gui.target),
-  //       0.005
-  //     );
-  //   }
-
-  //   if (gui.lerpPosition) {
-  //     camera.position.lerp(new THREE.Vector3(...gui.position), 0.005);
-  //   }
-  // });
-
-  const cameraControlsCallbackRef = useCallback((instance: CameraControls) => {
-    cameraControlsRef.current = instance;
-    instance?.setTarget(...INITIALS.target);
-  }, []);
-
   return (
     <>
       <PerspectiveCamera
@@ -106,7 +74,6 @@ function Layout({
         position={INITIALS.position} // initial camera position
         //
       />
-      <CameraControls ref={cameraControlsCallbackRef} />
 
       <Environment background>
         <mesh scale={100}>
@@ -114,6 +81,7 @@ function Layout({
           <meshBasicMaterial color={gui.bg} side={THREE.BackSide} />
         </mesh>
       </Environment>
+      {/* <Environment /> */}
 
       <spotLight
         position={[15, 15, 15]}
@@ -152,6 +120,5 @@ function Layout({
       {children}
     </>
   );
-}
-
+};
 export default Layout;
