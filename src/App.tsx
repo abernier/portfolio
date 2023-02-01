@@ -28,19 +28,6 @@ gsap.registerPlugin(GSDevTools);
 // globalThis.gsap = gsap;
 
 function App() {
-  // const [tl] = useState(() => gsap.timeline({ id: "main", paused: true }));
-  // globalThis.tl = tl;
-
-  // useEffect(() => {
-  //   console.log("GSDevTools");
-  //   const gsDevTools = GSDevTools.create({ animation: tl });
-
-  //   return () => {
-  //     console.log("kill");
-  //     gsDevTools.kill();
-  //   };
-  // }, [tl]);
-
   return (
     <Styled>
       <Canvas
@@ -113,6 +100,8 @@ function Scene() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const gsDevTools = GSDevTools.create();
+
       const tl = gsap.timeline({ paused: true });
 
       //
