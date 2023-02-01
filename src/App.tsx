@@ -46,9 +46,10 @@ export default App;
 
 function Scene() {
   const cameraControlsRef = useRef<CameraControls | null>(null);
-  const controls = useThree(
-    (state) => state.controls as unknown as CameraControls
-  );
+  globalThis.cameraControlsRef = cameraControlsRef;
+  // const controls = useThree(
+  //   (state) => state.controls as unknown as CameraControls
+  // );
 
   useFrame(({ clock }) => gsap.updateRoot(clock.getElapsedTime()));
 
@@ -110,59 +111,91 @@ function Scene() {
 
       const tlVideo = gsap.timeline();
 
-      tlVideo
-        .add(
-          gsap.fromTo(
-            video,
-            { currentTime: 0 },
-            { currentTime: 5, duration: 5, ease: "linear" }
-          ),
-          "label00"
-        )
-        .add(
-          gsap.fromTo(
-            video,
-            { currentTime: 5 },
-            { currentTime: 10, duration: 3, ease: "linear" }
-          ),
-          "label01"
-        )
-        .add(
-          gsap.fromTo(
-            video,
-            { currentTime: 10 },
-            { currentTime: 20, duration: 10, ease: "linear" }
-          ),
-          "label02"
-        );
-
-      // tlVideo.add(() => void console.log("coucou label00"), "label00");
-      tlVideo.call(
-        () => {
-          console.log("label00");
-          cameraControlsRef.current?.setPosition(4, 4, 8, true);
-        },
-        ["custom messge"],
+      tlVideo.add(
+        gsap.fromTo(
+          video,
+          { currentTime: 0 },
+          { currentTime: 93, duration: 93, ease: "linear" }
+        ),
         "label00"
       );
+      // .add(
+      //   gsap.fromTo(
+      //     video,
+      //     { currentTime: 0 },
+      //     { currentTime: 5, duration: 5, ease: "linear" }
+      //   ),
+      //   "label00"
+      // )
+      // .add(
+      //   gsap.fromTo(
+      //     video,
+      //     { currentTime: 5 },
+      //     { currentTime: 10, duration: 3, ease: "linear" }
+      //   ),
+      //   "label01"
+      // )
+      // .add(
+      //   gsap.fromTo(
+      //     video,
+      //     { currentTime: 10 },
+      //     { currentTime: 20, duration: 10, ease: "linear" }
+      //   ),
+      //   "label02"
+      // );
 
-      tlVideo.call(
-        () => {
-          console.log("label01");
-          cameraControlsRef.current?.setPosition(-4, -4, 8, true);
-        },
-        ["custom messge"],
-        "label01"
-      );
+      tlVideo
+        .call(
+          () => {
+            console.log("0");
+            cameraControlsRef.current?.setPosition(4.37, 1.15, 8.42, true);
+            cameraControlsRef.current?.setTarget(0.3, 0.72, 0.21, true);
+          },
+          ["custom messge"],
+          0
+        )
+        .call(
+          () => {
+            console.log("4");
+            cameraControlsRef.current?.setPosition(-10.73, 8.4, 18.62, true);
+            cameraControlsRef.current?.setTarget(0, 3, 0, true);
+          },
+          ["custom messge"],
+          4
+        )
+        .call(
+          () => {
+            cameraControlsRef.current?.setPosition(-6.02, 5.66, 11.06, true);
+            cameraControlsRef.current?.setTarget(-0.29, 2.86, -0.12, true);
+          },
+          ["custom messge"],
+          8.2
+        )
 
-      tlVideo.call(
-        () => {
-          console.log("label02");
-          cameraControlsRef.current?.setPosition(-4, 8, 8, true);
-        },
-        ["custom messge"],
-        "label02"
-      );
+        .call(
+          () => {
+            cameraControlsRef.current?.setPosition(5.59, 4.61, 12.64, true);
+            cameraControlsRef.current?.setTarget(0.27, 1.91, -0.15, true);
+          },
+          ["custom messge"],
+          15.3
+        )
+        .call(
+          () => {
+            cameraControlsRef.current?.setPosition(5.9, 3.63, 12.72, true);
+            cameraControlsRef.current?.setTarget(0.49, 3, -0.29, true);
+          },
+          ["custom messge"],
+          17.8
+        )
+        .call(
+          () => {
+            cameraControlsRef.current?.setPosition(8.16, 3.9, 18.15, true);
+            cameraControlsRef.current?.setTarget(0.49, 3, -0.29, true);
+          },
+          ["custom messge"],
+          24
+        );
 
       // ScrollTrigger.create({
       //   trigger: document.body,
@@ -253,7 +286,7 @@ function Scene() {
     <Layout>
       <CameraControls
         ref={cameraControlsCallbackRef}
-        // smoothTime={1}
+        smoothTime={1}
         // azimuthRotateSpeed={1}
         // polarRotateSpeed={1}
       />
