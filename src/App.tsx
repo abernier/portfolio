@@ -116,35 +116,49 @@ function Scene() {
       const tl = gsap.timeline({ paused: true });
 
       //
-      // twVideo
+      // 🎞️ tlVideo
       //
 
-      const twVideo = gsap.fromTo(
-        video,
-        { currentTime: 0 },
-        { currentTime: 93, duration: 93, ease: "linear", paused: true }
-      );
+      const tlVideo = gsap.timeline();
 
-      ScrollTrigger.create({
-        trigger: document.body,
-        start: "top top",
-        end: "bottom bottom",
-        markers: true,
-        snap: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], // snap to 10% increments
-        scrub: 1,
-        onUpdate(st) {
-          // console.log("scrollTrigger", st.progress);
-          twVideo.progress(st.progress);
-        },
-      });
+      const twsVideo = {
+        label01: gsap.fromTo(
+          video,
+          { currentTime: 0 },
+          { currentTime: 5, duration: 5, ease: "linear" }
+        ),
+        label02: gsap.fromTo(
+          video,
+          { currentTime: 25 },
+          { currentTime: 25, duration: 10, ease: "linear" }
+        ),
+      };
 
-      tl.add(twVideo);
+      // Add all tweens to the timeline
+      Object.entries(twsVideo).forEach(([label, tw]) => tlVideo.add(tw, label));
+
+      // ScrollTrigger.create({
+      //   trigger: document.body,
+      //   start: "top top",
+      //   end: "bottom bottom",
+      //   markers: true,
+      //   snap: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], // snap to 10% increments
+      //   scrub: 1,
+      //   onUpdate(st) {
+      //     // console.log("scrollTrigger", st.progress);
+      //     tlVideo.progress(st.progress);
+      //   },
+      // });
+
+      tl.add(tlVideo);
 
       //
-      // twCamera
+      // 🎥 twCamera
       //
 
-      const twCamera = gsap.timeline({ paused: true });
+      const twCamera = gsap.timeline();
+
+      tl.add(twCamera);
 
       //
       //
