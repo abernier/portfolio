@@ -59,9 +59,9 @@ export default App;
 
 function Scene() {
   const cameraControlsRef = useRef<CameraControls | null>(null);
-  // const controls = useThree(
-  //   (state) => state.controls as unknown as CameraControls
-  // );
+  const controls = useThree(
+    (state) => state.controls as unknown as CameraControls
+  );
 
   useFrame(({ clock }) => gsap.updateRoot(clock.getElapsedTime()));
 
@@ -85,13 +85,13 @@ function Scene() {
   //
 
   useEffect(() => {
-    console.log("useEffect video", video);
+    // console.log("useEffect video", video);
 
     video.load();
     // video.addEventListener("canplaythrough", () => video.play());
 
     function handleLoadedmetadata() {
-      console.log("loadedmetadata", video.duration);
+      // console.log("loadedmetadata", video.duration);
     }
 
     video.addEventListener("loadedmetadata", handleLoadedmetadata);
@@ -121,28 +121,67 @@ function Scene() {
 
       const tlVideo = gsap.timeline();
 
-      const twsVideo = {
-        label01: gsap.fromTo(
-          video,
-          { currentTime: 0 },
-          { currentTime: 5, duration: 5, ease: "linear" }
-        ),
-        label02: gsap.fromTo(
-          video,
-          { currentTime: 25 },
-          { currentTime: 25, duration: 10, ease: "linear" }
-        ),
-      };
+      tlVideo
+        .add(
+          gsap.fromTo(
+            video,
+            { currentTime: 0 },
+            { currentTime: 5, duration: 5, ease: "linear" }
+          ),
+          "label00"
+        )
+        .add(
+          gsap.fromTo(
+            video,
+            { currentTime: 5 },
+            { currentTime: 10, duration: 3, ease: "linear" }
+          ),
+          "label01"
+        )
+        .add(
+          gsap.fromTo(
+            video,
+            { currentTime: 10 },
+            { currentTime: 20, duration: 10, ease: "linear" }
+          ),
+          "label02"
+        );
 
-      // Add all tweens to the timeline
-      Object.entries(twsVideo).forEach(([label, tw]) => tlVideo.add(tw, label));
+      // tlVideo.add(() => void console.log("coucou label00"), "label00");
+      tlVideo.call(
+        () => {
+          console.log("label00");
+          cameraControlsRef.current?.setPosition(4, 4, 8, true);
+        },
+        ["custom messge"],
+        "label00"
+      );
+
+      tlVideo.call(
+        () => {
+          console.log("label01");
+          cameraControlsRef.current?.setPosition(-4, -4, 8, true);
+        },
+        ["custom messge"],
+        "label01"
+      );
+
+      tlVideo.call(
+        () => {
+          console.log("label02");
+          cameraControlsRef.current?.setPosition(-4, 8, 8, true);
+        },
+        ["custom messge"],
+        "label02"
+      );
 
       // ScrollTrigger.create({
       //   trigger: document.body,
       //   start: "top top",
       //   end: "bottom bottom",
       //   markers: true,
-      //   snap: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], // snap to 10% increments
+      //   animation: tlVideo,
+      //   snap: "labels", // snap to 10% increments
       //   scrub: 1,
       //   onUpdate(st) {
       //     // console.log("scrollTrigger", st.progress);
@@ -150,15 +189,13 @@ function Scene() {
       //   },
       // });
 
-      tl.add(tlVideo);
-
       //
       // 🎥 twCamera
       //
 
-      const twCamera = gsap.timeline();
+      const tlCamera = gsap.timeline();
 
-      tl.add(twCamera);
+      tl.add(tlCamera);
 
       //
       //
@@ -176,7 +213,7 @@ function Scene() {
 
     instance.setTarget(0, 3, 0);
     // instance.mouseButtons.wheel = CameraControlsImpl.ACTION.NONE; // disable wheel
-    instance.mouseButtons.wheel = 0; // disable wheel
+    // instance.mouseButtons.wheel = 0; // disable wheel
   }, []);
   // useEffect(() => {
   //   if (!controls) return;
@@ -225,7 +262,12 @@ function Scene() {
 
   return (
     <Layout>
-      <CameraControls ref={cameraControlsCallbackRef} />
+      <CameraControls
+        ref={cameraControlsCallbackRef}
+        // smoothTime={1}
+        // azimuthRotateSpeed={1}
+        // polarRotateSpeed={1}
+      />
       <Iphone
         scale={40}
         rotation-y={Math.PI}
