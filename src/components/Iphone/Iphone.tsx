@@ -13,7 +13,9 @@ type IphoneProps = JSX.IntrinsicElements["group"] & {
 export function Iphone({ children, screenTexture, ...props }: IphoneProps) {
   return (
     <>
-      <Model screenTexture={screenTexture} {...props} />
+      <Model screenTexture={screenTexture} {...props}>
+        {children}
+      </Model>
     </>
   );
 }

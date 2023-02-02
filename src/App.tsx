@@ -1,15 +1,9 @@
 import * as THREE from "three";
 import styled from "@emotion/styled";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
 
 import Layout from "./Layout";
-import {
-  CameraControls,
-  CatmullRomLine,
-  Sparkles,
-  useKeyboardControls,
-} from "@react-three/drei";
-import { Line2 } from "three-stdlib";
+import { CameraControls, Sparkles } from "@react-three/drei";
 
 // import CameraControlsImpl from "camera-controls";
 
@@ -18,7 +12,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { GSDevTools } from "gsap/GSDevTools";
 
 import Iphone from "./components/Iphone";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { folder, useControls } from "leva";
 
 gsap.ticker.remove(gsap.updateRoot); // https://greensock.com/docs/v3/GSAP/gsap.updateRoot()
 gsap.registerPlugin(ScrollTrigger);
@@ -51,7 +53,24 @@ function Scene() {
   //   (state) => state.controls as unknown as CameraControls
   // );
 
-  useFrame(({ clock }) => gsap.updateRoot(clock.getElapsedTime()));
+  const boxRef = useRef<THREE.Mesh>(null);
+  globalThis.boxRef = boxRef;
+
+  const {
+    y: cameraFrameY,
+    w: cameraFrameW,
+    h: cameraFrameH,
+    rotX: iphoneRotX,
+  } = useControls({
+    cameraFrame: folder({
+      y: { value: 0, min: -8, max: 8, step: 0.1 },
+      w: { value: 7, min: 0.5, max: 7, step: 1 },
+      h: { value: 5, min: 0.5, max: 15, step: 1 },
+    }),
+    iphone: folder({
+      rotX: { value: -Math.PI / 12, min: -Math.PI / 2, max: 0 },
+    }),
+  });
 
   const [video] = useState(() => {
     const el = document.createElement("video");
@@ -99,11 +118,19 @@ function Scene() {
   // gsap
   //
 
+  useFrame(({ clock }) => gsap.updateRoot(clock.getElapsedTime()));
+
+  // GSDevTools (see: https://greensock.com/forums/topic/35589-gsdevtools-and-react-18/)
+  useEffect(() => {
+    const gsDevTools = GSDevTools.create();
+
+    // @ts-ignore
+    return () => void gsDevTools.kill();
+  }, []);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const gsDevTools = GSDevTools.create();
-
-      const tl = gsap.timeline({ paused: true });
+      const tl = gsap.timeline();
 
       //
       // 🎞️ tlVideo
@@ -144,58 +171,58 @@ function Scene() {
       //   "label02"
       // );
 
-      tlVideo
-        .call(
-          () => {
-            console.log("0");
-            cameraControlsRef.current?.setPosition(4.37, 1.15, 8.42, true);
-            cameraControlsRef.current?.setTarget(0.3, 0.72, 0.21, true);
-          },
-          ["custom messge"],
-          0
-        )
-        .call(
-          () => {
-            console.log("4");
-            cameraControlsRef.current?.setPosition(-10.73, 8.4, 18.62, true);
-            cameraControlsRef.current?.setTarget(0, 3, 0, true);
-          },
-          ["custom messge"],
-          4
-        )
-        .call(
-          () => {
-            cameraControlsRef.current?.setPosition(-6.02, 5.66, 11.06, true);
-            cameraControlsRef.current?.setTarget(-0.29, 2.86, -0.12, true);
-          },
-          ["custom messge"],
-          8.2
-        )
+      // tlVideo
+      //   .call(
+      //     () => {
+      //       console.log("0");
+      //       // cameraControlsRef.current?.setPosition(4.37, 1.15, 8.42, true);
+      //       cameraControlsRef.current?.setTarget(0.3, 0.72, 0.21, true);
+      //     },
+      //     ["custom messge"],
+      //     0
+      //   )
+      //   .call(
+      //     () => {
+      //       console.log("4");
+      //       // cameraControlsRef.current?.setPosition(-10.73, 8.4, 18.62, true);
+      //       cameraControlsRef.current?.setTarget(0, 3, 0, true);
+      //     },
+      //     ["custom messge"],
+      //     4
+      //   )
+      //   .call(
+      //     () => {
+      //       // cameraControlsRef.current?.setPosition(-6.02, 5.66, 11.06, true);
+      //       cameraControlsRef.current?.setTarget(-0.29, 2.86, -0.12, true);
+      //     },
+      //     ["custom messge"],
+      //     8.2
+      //   )
 
-        .call(
-          () => {
-            cameraControlsRef.current?.setPosition(5.59, 4.61, 12.64, true);
-            cameraControlsRef.current?.setTarget(0.27, 1.91, -0.15, true);
-          },
-          ["custom messge"],
-          15.3
-        )
-        .call(
-          () => {
-            cameraControlsRef.current?.setPosition(5.9, 3.63, 12.72, true);
-            cameraControlsRef.current?.setTarget(0.49, 3, -0.29, true);
-          },
-          ["custom messge"],
-          17.8
-        )
-        .call(
-          () => {
-            cameraControlsRef.current?.setPosition(8.16, 3.9, 18.15, true);
-            cameraControlsRef.current?.setTarget(0.49, 3, -0.29, true);
-          },
-          ["custom messge"],
-          24
-        );
+      //   .call(
+      //     () => {
+      //       // cameraControlsRef.current?.setPosition(5.59, 4.61, 12.64, true);
+      //       cameraControlsRef.current?.setTarget(0.27, 1.91, -0.15, true);
+      //     },
+      //     ["custom messge"],
+      //     15.3
+      //   )
+      //   .call(
+      //     () => {
+      //       // cameraControlsRef.current?.setPosition(5.9, 3.63, 12.72, true);
+      //       cameraControlsRef.current?.setTarget(0.49, 3, -0.29, true);
+      //     },
+      //     ["custom messge"],
+      //     17.8
+      //   )
+      //   .call(
+      //     () => {
+      //       // cameraControlsRef.current?.setPosition(8.16, 3.9, 18.15, true);
+      //       cameraControlsRef.current?.setTarget(0.49, 3, -0.29, true);
+      //     },
+      //     ["custom messge"],
+      //     24
+      //   );
 
       // ScrollTrigger.create({
       //   trigger: document.body,
@@ -211,13 +238,15 @@ function Scene() {
       //   },
       // });
 
+      tl.add(tlVideo);
+
       //
       // 🎥 twCamera
       //
 
-      const tlCamera = gsap.timeline();
+      // const tlCamera = gsap.timeline();
 
-      tl.add(tlCamera);
+      // tl.add(tlCamera);
 
       //
       //
@@ -244,44 +273,6 @@ function Scene() {
   //   controls.mouseButtons.wheel = CameraControlsImpl.ACTION.NONE; // disable wheel
   // }, [controls]);
 
-  //
-  // curve
-  //
-
-  // const curve1Ref = useRef<Line2 | null>(null);
-
-  // const curve1CallbackRef = useCallback((instance: Line2) => {
-  //   curve1Ref.current = instance;
-  //   console.log("curve1Ref", instance);
-  // }, []);
-
-  //
-  // [space] play/pause
-  //
-
-  // const [subscribeKeys, getKeys] = useKeyboardControls(); // see: https://github.com/pmndrs/drei#keyboardcontrols
-  // useEffect(() => {
-  //   const unsubscribeJump = subscribeKeys(
-  //     (state: any) => state.spc,
-  //     (value) => {
-  //       if (value) {
-  //         console.log("space");
-
-  //         // const { current: video } = videoRef;
-  //         // if (!video) return;
-
-  //         // if (!video.paused) {
-  //         //   video.pause();
-  //         // } else {
-  //         //   video.play();
-  //         // }
-  //       }
-  //     }
-  //   );
-
-  //   return () => unsubscribeJump();
-  // }, [subscribeKeys]);
-
   return (
     <Layout>
       <CameraControls
@@ -290,25 +281,20 @@ function Scene() {
         // azimuthRotateSpeed={1}
         // polarRotateSpeed={1}
       />
+
       <Iphone
         scale={40}
         rotation-y={Math.PI}
-        rotation-x={-Math.PI / 12}
+        rotation-x={iphoneRotX}
         screenTexture={videoTexture}
-      />
-
-      {/* <CatmullRomLine
-        ref={curve1CallbackRef}
-        points={[
-          [-3, 2, 1],
-          [2, 2, 0],
-          [-1, 0, 3],
-          [2, -1, 0],
-        ]} // Array of Points
-        color="#ec36a0"
-        lineWidth={3} // In pixels (default)
-        segments={64}
-      /> */}
+      >
+        <CameraFrame
+          ref={boxRef}
+          y={cameraFrameY}
+          w={cameraFrameW}
+          h={cameraFrameH}
+        />
+      </Iphone>
 
       <Sparkles
         count={20}
@@ -320,3 +306,95 @@ function Scene() {
     </Layout>
   );
 }
+
+//
+// <CameraFrame>
+//
+//
+//
+
+type CameraFrameProps = {
+  y?: number;
+  w?: number;
+  h?: number;
+};
+
+// https://stackoverflow.com/a/73748435/133327
+const useForwardRef = <T,>(
+  ref: React.ForwardedRef<T>,
+  initialValue: any = null
+) => {
+  const targetRef = useRef<T>(initialValue);
+
+  useEffect(() => {
+    if (!ref) return;
+
+    if (typeof ref === "function") {
+      ref(targetRef.current);
+    } else {
+      ref.current = targetRef.current;
+    }
+  }, [ref]);
+
+  return targetRef;
+};
+
+const CameraFrame = forwardRef<THREE.Mesh, CameraFrameProps>(
+  ({ y = 0, w = 7, h = 5 }, ref) => {
+    const boxRef = useForwardRef(ref);
+
+    const { scene } = useThree();
+
+    const [bbox] = useState(new THREE.Box3());
+    const [bs] = useState(new THREE.Sphere());
+    const [center] = useState(new THREE.Vector3());
+
+    const boxHelperRef = useRef<THREE.BoxHelper>(null);
+    const sphereRef = useRef<THREE.Mesh>(null);
+    // globalThis.sphereRef = boxRef;
+
+    useFrame(() => {
+      if (!boxHelperRef.current) return;
+      boxHelperRef.current.update(); // boxHelper.udpate()
+
+      // Compute bbox and bs (from boxRef)
+      if (!boxRef?.current) return; // https://stackoverflow.com/a/62238917/133327
+      bbox.setFromObject(boxRef.current);
+      bbox.getBoundingSphere(bs);
+
+      // Update our debug sphere
+      if (!sphereRef.current) return;
+      bbox.getCenter(center);
+      sphereRef.current.position.copy(center);
+      sphereRef.current.scale.setScalar(bs.radius);
+    });
+
+    return (
+      <group position-y={y}>
+        <mesh ref={boxRef}>
+          <boxGeometry args={[w, h, 1]} />
+          <meshStandardMaterial color="red" wireframe />
+        </mesh>
+
+        {boxRef?.current &&
+          createPortal(
+            <>
+              {/* Bounding box */}
+              <boxHelper ref={boxHelperRef} args={[boxRef.current, 0x0000ff]} />
+              {/* Bounding sphere */}
+              <mesh ref={sphereRef}>
+                <sphereGeometry args={[1]} />
+                <meshBasicMaterial
+                  color="#00ff00"
+                  transparent
+                  // opacity={0.125}
+                  wireframe
+                />
+              </mesh>
+            </>,
+            scene
+          )}
+      </group>
+    );
+  }
+);
