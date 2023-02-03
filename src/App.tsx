@@ -67,15 +67,19 @@ function Scene() {
     w: cameraFrameW,
     h: cameraFrameH,
     rotX: iphoneRotX,
+    boundingSphere,
+    boundingBox,
   } = useControls({
     cameraFrame: folder(
       {
-        y: { value: -5, min: -8, max: 8, step: 0.1 },
+        y: { value: -5, min: -8, max: 8, step: 1 },
+        h: { value: 5, min: 0.5, max: 15.4926, step: 1 },
         w: { value: 7, min: 0.5, max: 7, step: 1 },
-        h: { value: 5, min: 0.5, max: 15, step: 1 },
       }
       // { collapsed: true }
     ),
+    boundingSphere: true,
+    boundingBox: true,
     iphone: folder(
       {
         rotX: { value: -Math.PI / 12, min: -Math.PI / 2, max: 0 },
@@ -94,7 +98,7 @@ function Scene() {
     const target = cameraFrame.bs.center;
 
     // update distance (aka. radius)
-    easing.damp(cameraControls._sphericalEnd, "radius", d, 1, delta);
+    easing.damp(cameraControls._sphericalEnd, "radius", d, 2, delta);
     cameraControls._spherical.radius = cameraControls._sphericalEnd.radius;
 
     // update target
@@ -323,6 +327,8 @@ function Scene() {
           y={cameraFrameY}
           w={cameraFrameW}
           h={cameraFrameH}
+          boundingSphere={boundingSphere}
+          boundingBox={boundingBox}
         />
       </Iphone>
 
@@ -373,10 +379,12 @@ type CameraFrameAPI = {
   box: THREE.Mesh | null;
   bbox: THREE.Box3;
   bs: THREE.Sphere;
+  boundingBox?: boolean;
+  boundingSphere?: boolean;
 };
 
 const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
-  ({ y = 0, w = 7, h = 5 }, ref) => {
+  ({ y = 0, w = 7, h = 5, boundingBox, boundingSphere }, ref) => {
     // const boxRef = useForwardRef(ref);
     const boxRef = useRef<THREE.Mesh>(null);
 
@@ -404,19 +412,20 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
     }));
 
     useFrame(() => {
-      if (!boxHelperRef.current) return;
-      boxHelperRef.current.update(); // boxHelper.udpate()
-
       // Compute bbox and bs (from boxRef)
       if (!boxRef?.current) return; // https://stackoverflow.com/a/62238917/133327
       bbox.setFromObject(boxRef.current);
       bbox.getBoundingSphere(bs);
 
-      // Update our debug sphere
-      if (!sphereRef.current) return;
-      bbox.getCenter(center);
-      sphereRef.current.position.copy(center);
-      sphereRef.current.scale.setScalar(bs.radius);
+      // Update boxHelper
+      if (boxHelperRef.current) boxHelperRef.current.update();
+
+      // Update our debug sphere (position and scale)
+      if (sphereRef.current) {
+        bbox.getCenter(center);
+        sphereRef.current.position.copy(center);
+        sphereRef.current.scale.setScalar(bs.radius);
+      }
     });
 
     return (
@@ -430,18 +439,25 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
           createPortal(
             <>
               {/* Bounding box */}
-              <boxHelper ref={boxHelperRef} args={[boxRef.current, 0x0000ff]} />
+              {boundingBox && (
+                <boxHelper
+                  ref={boxHelperRef}
+                  args={[boxRef.current, 0x0000ff]}
+                />
+              )}
 
               {/* Bounding sphere */}
-              <mesh ref={sphereRef}>
-                <sphereGeometry args={[1]} />
-                <meshBasicMaterial
-                  color="#00ff00"
-                  transparent
-                  // opacity={0.125}
-                  wireframe
-                />
-              </mesh>
+              {boundingSphere && (
+                <mesh ref={sphereRef}>
+                  <sphereGeometry args={[1]} />
+                  <meshBasicMaterial
+                    color="#00ff00"
+                    transparent
+                    // opacity={0.5}
+                    wireframe
+                  />
+                </mesh>
+              )}
             </>,
             scene
           )}
