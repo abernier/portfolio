@@ -1,4 +1,4 @@
-import { useControls } from "leva";
+import { useControls, folder } from "leva";
 
 function Ground({
   size = 10,
@@ -8,7 +8,7 @@ function Ground({
   circle?: boolean;
 }) {
   const gui = useControls({
-    color: "#999",
+    Ground: folder({ color: "#999" }, { collapsed: true }),
   });
   return (
     <mesh

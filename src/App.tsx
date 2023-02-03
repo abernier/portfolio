@@ -16,11 +16,12 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { folder, useControls } from "leva";
+import { Leva, folder, useControls, button } from "leva";
 
 gsap.ticker.remove(gsap.updateRoot); // https://greensock.com/docs/v3/GSAP/gsap.updateRoot()
 gsap.registerPlugin(ScrollTrigger);
@@ -37,6 +38,9 @@ function App() {
       >
         <Scene />
       </Canvas>
+      <Leva
+      // collapsed={true}
+      />
     </Styled>
   );
 }
@@ -53,8 +57,8 @@ function Scene() {
   //   (state) => state.controls as unknown as CameraControls
   // );
 
-  const boxRef = useRef<THREE.Mesh>(null);
-  globalThis.boxRef = boxRef;
+  const cameraFrameRef = useRef<CameraFrameAPI>(null);
+  // globalThis.cameraFrameRef = cameraFrameRef;
 
   const {
     y: cameraFrameY,
@@ -62,14 +66,25 @@ function Scene() {
     h: cameraFrameH,
     rotX: iphoneRotX,
   } = useControls({
-    cameraFrame: folder({
-      y: { value: 0, min: -8, max: 8, step: 0.1 },
-      w: { value: 7, min: 0.5, max: 7, step: 1 },
-      h: { value: 5, min: 0.5, max: 15, step: 1 },
-    }),
-    iphone: folder({
-      rotX: { value: -Math.PI / 12, min: -Math.PI / 2, max: 0 },
-    }),
+    cameraFrame: folder(
+      {
+        y: { value: 0, min: -8, max: 8, step: 0.1 },
+        w: { value: 7, min: 0.5, max: 7, step: 1 },
+        h: { value: 5, min: 0.5, max: 15, step: 1 },
+      }
+      // { collapsed: true }
+    ),
+    fitToSphere: button(
+      (get) =>
+        cameraFrameRef.current &&
+        cameraControlsRef.current?.fitToSphere(cameraFrameRef.current.bs, true)
+    ),
+    iphone: folder(
+      {
+        rotX: { value: -Math.PI / 12, min: -Math.PI / 2, max: 0 },
+      },
+      { collapsed: true }
+    ),
   });
 
   const [video] = useState(() => {
@@ -289,7 +304,7 @@ function Scene() {
         screenTexture={videoTexture}
       >
         <CameraFrame
-          ref={boxRef}
+          ref={cameraFrameRef}
           y={cameraFrameY}
           w={cameraFrameW}
           h={cameraFrameH}
@@ -339,9 +354,16 @@ const useForwardRef = <T,>(
   return targetRef;
 };
 
-const CameraFrame = forwardRef<THREE.Mesh, CameraFrameProps>(
+type CameraFrameAPI = {
+  box: THREE.Mesh | null;
+  bbox: THREE.Box3;
+  bs: THREE.Sphere;
+};
+
+const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
   ({ y = 0, w = 7, h = 5 }, ref) => {
-    const boxRef = useForwardRef(ref);
+    // const boxRef = useForwardRef(ref);
+    const boxRef = useRef<THREE.Mesh>(null);
 
     const { scene } = useThree();
 
@@ -352,6 +374,19 @@ const CameraFrame = forwardRef<THREE.Mesh, CameraFrameProps>(
     const boxHelperRef = useRef<THREE.BoxHelper>(null);
     const sphereRef = useRef<THREE.Mesh>(null);
     // globalThis.sphereRef = boxRef;
+
+    // https://stackoverflow.com/a/61388453/133327
+    useImperativeHandle(ref, () => ({
+      get box() {
+        return boxRef.current;
+      },
+      get bbox() {
+        return bbox;
+      },
+      get bs() {
+        return bs;
+      },
+    }));
 
     useFrame(() => {
       if (!boxHelperRef.current) return;
@@ -381,6 +416,7 @@ const CameraFrame = forwardRef<THREE.Mesh, CameraFrameProps>(
             <>
               {/* Bounding box */}
               <boxHelper ref={boxHelperRef} args={[boxRef.current, 0x0000ff]} />
+
               {/* Bounding sphere */}
               <mesh ref={sphereRef}>
                 <sphereGeometry args={[1]} />
