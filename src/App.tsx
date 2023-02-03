@@ -5,6 +5,8 @@ import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
 import Layout from "./Layout";
 import { CameraControls, Sparkles } from "@react-three/drei";
 
+import { easing } from "maath";
+
 // import CameraControlsImpl from "camera-controls";
 
 import gsap from "gsap";
@@ -58,7 +60,7 @@ function Scene() {
   // );
 
   const cameraFrameRef = useRef<CameraFrameAPI>(null);
-  // globalThis.cameraFrameRef = cameraFrameRef;
+  globalThis.cameraFrameRef = cameraFrameRef;
 
   const {
     y: cameraFrameY,
@@ -68,16 +70,11 @@ function Scene() {
   } = useControls({
     cameraFrame: folder(
       {
-        y: { value: 0, min: -8, max: 8, step: 0.1 },
+        y: { value: -5, min: -8, max: 8, step: 0.1 },
         w: { value: 7, min: 0.5, max: 7, step: 1 },
         h: { value: 5, min: 0.5, max: 15, step: 1 },
       }
       // { collapsed: true }
-    ),
-    fitToSphere: button(
-      (get) =>
-        cameraFrameRef.current &&
-        cameraControlsRef.current?.fitToSphere(cameraFrameRef.current.bs, true)
     ),
     iphone: folder(
       {
@@ -85,6 +82,24 @@ function Scene() {
       },
       { collapsed: true }
     ),
+  });
+
+  useFrame((_, delta) => {
+    if (!cameraControlsRef.current || !cameraFrameRef.current) return;
+
+    const cameraControls = cameraControlsRef.current;
+    const cameraFrame = cameraFrameRef.current;
+
+    const d = cameraControls.getDistanceToFitSphere(cameraFrame.bs.radius);
+    const target = cameraFrame.bs.center;
+
+    // update distance (aka. radius)
+    easing.damp(cameraControls._sphericalEnd, "radius", d, 1, delta);
+    cameraControls._spherical.radius = cameraControls._sphericalEnd.radius;
+
+    // update target
+    easing.damp3(cameraControls._targetEnd, target, 1, delta);
+    cameraControls._target.copy(cameraControls._targetEnd);
   });
 
   const [video] = useState(() => {

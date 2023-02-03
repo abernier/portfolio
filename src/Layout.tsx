@@ -106,7 +106,7 @@ const Layout = ({ children, bg = "#2d334b" }: LayoutProps) => {
       )}
 
       <Ground size={10} circle />
-      <ContactShadows
+      {/* <ContactShadows
         frames={1}
         opacity={1}
         scale={10}
@@ -114,7 +114,7 @@ const Layout = ({ children, bg = "#2d334b" }: LayoutProps) => {
         far={10}
         resolution={256}
         color="#000000"
-      />
+      /> */}
       {/* {gui.axes && <axesHelper args={[5]} />} */}
 
       {children}
