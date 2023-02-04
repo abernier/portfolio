@@ -79,6 +79,7 @@ function Scene() {
     fitting,
     centering,
     dezoomFactor,
+    ...gui
   } = useControls({
     cameraFrame: folder(
       {
@@ -93,6 +94,7 @@ function Scene() {
     fitting: true,
     centering: true,
     dezoomFactor: { value: 1, min: 1, max: 5, step: 0.1 },
+    gsdevtools: true,
     iphone: folder(
       {
         rotX: { value: -Math.PI / 12, min: -Math.PI / 2, max: 0 },
@@ -173,11 +175,17 @@ function Scene() {
 
   // GSDevTools (see: https://greensock.com/forums/topic/35589-gsdevtools-and-react-18/)
   useEffect(() => {
-    const gsDevTools = GSDevTools.create();
+    let gsDevTools: GSDevTools | undefined;
 
-    // @ts-ignore
-    return () => void gsDevTools.kill();
-  }, []);
+    if (gui.gsdevtools) {
+      gsDevTools = GSDevTools.create();
+    }
+
+    return () => {
+      // @ts-ignore
+      gsDevTools?.kill();
+    };
+  }, [gui.gsdevtools]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
