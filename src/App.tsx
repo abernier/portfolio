@@ -67,8 +67,10 @@ function Scene() {
     w: cameraFrameW,
     h: cameraFrameH,
     rotX: iphoneRotX,
-    boundingSphere,
-    boundingBox,
+    showBoundingSphere,
+    showBoundingBox,
+    fitting,
+    centering,
   } = useControls({
     cameraFrame: folder(
       {
@@ -78,8 +80,10 @@ function Scene() {
       }
       // { collapsed: true }
     ),
-    boundingSphere: true,
-    boundingBox: true,
+    showBoundingSphere: true,
+    showBoundingBox: true,
+    fitting: true,
+    centering: true,
     iphone: folder(
       {
         rotX: { value: -Math.PI / 12, min: -Math.PI / 2, max: 0 },
@@ -97,13 +101,17 @@ function Scene() {
     const d = cameraControls.getDistanceToFitSphere(cameraFrame.bs.radius);
     const target = cameraFrame.bs.center;
 
-    // update distance (aka. radius)
-    easing.damp(cameraControls._sphericalEnd, "radius", d, 2, delta);
-    cameraControls._spherical.radius = cameraControls._sphericalEnd.radius;
+    if (fitting) {
+      // update distance (aka. radius)
+      easing.damp(cameraControls._sphericalEnd, "radius", d, 2, delta);
+      cameraControls._spherical.radius = cameraControls._sphericalEnd.radius;
+    }
 
-    // update target
-    easing.damp3(cameraControls._targetEnd, target, 1, delta);
-    cameraControls._target.copy(cameraControls._targetEnd);
+    if (centering) {
+      // update target
+      easing.damp3(cameraControls._targetEnd, target, 1, delta);
+      cameraControls._target.copy(cameraControls._targetEnd);
+    }
   });
 
   const [video] = useState(() => {
@@ -307,6 +315,14 @@ function Scene() {
   //   controls.mouseButtons.wheel = CameraControlsImpl.ACTION.NONE; // disable wheel
   // }, [controls]);
 
+  let _cameraFrameY = cameraFrameY;
+  let _cameraFrameH = cameraFrameH;
+  // if (cameraFrameY + cameraFrameH / 2 > 15.4926 / 2) {
+  //   _cameraFrameY -= cameraFrameY + cameraFrameH / 2 - 15.4926 / 2;
+  // } else if (cameraFrameY - cameraFrameH / 2 < 15.4926 / 2) {
+  //   _cameraFrameY -= cameraFrameY - cameraFrameH / 2 + 15.4926 / 2;
+  // }
+
   return (
     <Layout>
       <CameraControls
@@ -324,11 +340,11 @@ function Scene() {
       >
         <CameraFrame
           ref={cameraFrameRef}
-          y={cameraFrameY}
+          y={_cameraFrameY}
           w={cameraFrameW}
-          h={cameraFrameH}
-          boundingSphere={boundingSphere}
-          boundingBox={boundingBox}
+          h={_cameraFrameH}
+          showBoundingSphere={showBoundingSphere}
+          showBoundingBox={showBoundingBox}
         />
       </Iphone>
 
@@ -353,6 +369,8 @@ type CameraFrameProps = {
   y?: number;
   w?: number;
   h?: number;
+  showBoundingBox: boolean;
+  showBoundingSphere: boolean;
 };
 
 // https://stackoverflow.com/a/73748435/133327
@@ -379,12 +397,10 @@ type CameraFrameAPI = {
   box: THREE.Mesh | null;
   bbox: THREE.Box3;
   bs: THREE.Sphere;
-  boundingBox?: boolean;
-  boundingSphere?: boolean;
 };
 
 const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
-  ({ y = 0, w = 7, h = 5, boundingBox, boundingSphere }, ref) => {
+  ({ y = 0, w = 7, h = 5, showBoundingBox, showBoundingSphere }, ref) => {
     // const boxRef = useForwardRef(ref);
     const boxRef = useRef<THREE.Mesh>(null);
 
@@ -439,7 +455,7 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
           createPortal(
             <>
               {/* Bounding box */}
-              {boundingBox && (
+              {showBoundingBox && (
                 <boxHelper
                   ref={boxHelperRef}
                   args={[boxRef.current, 0x0000ff]}
@@ -447,7 +463,7 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
               )}
 
               {/* Bounding sphere */}
-              {boundingSphere && (
+              {showBoundingSphere && (
                 <mesh ref={sphereRef}>
                   <sphereGeometry args={[1]} />
                   <meshBasicMaterial
