@@ -92,7 +92,7 @@ function Scene() {
     showBoundingBox: true,
     fitting: true,
     centering: true,
-    dezoomFactor: { value: 0, min: 0, max: 5, step: 0.1 },
+    dezoomFactor: { value: 1, min: 1, max: 5, step: 0.1 },
     iphone: folder(
       {
         rotX: { value: -Math.PI / 12, min: -Math.PI / 2, max: 0 },
@@ -417,7 +417,7 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
       h = 5,
       showBoundingBox,
       showBoundingSphere,
-      dezoomFactor = 0,
+      dezoomFactor = 1,
     },
     ref
   ) => {
@@ -452,7 +452,7 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
       if (!boxRef?.current) return; // https://stackoverflow.com/a/62238917/133327
       bbox.setFromObject(boxRef.current);
       bbox.getBoundingSphere(bs);
-      bs.radius *= 1 + dezoomFactor;
+      bs.radius *= dezoomFactor;
 
       // Update boxHelper
       if (boxHelperRef.current) boxHelperRef.current.update();
@@ -490,7 +490,7 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
                   <meshBasicMaterial
                     color="#00ff00"
                     transparent
-                    // opacity={0.5}
+                    opacity={0.25}
                     wireframe
                   />
                 </mesh>
