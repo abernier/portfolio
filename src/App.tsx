@@ -89,7 +89,7 @@ function Scene() {
       // { collapsed: true }
     ),
     showBoundingSphere: true,
-    showBoundingBox: true,
+    showBoundingBox: false,
     fitting: true,
     centering: true,
     dezoomFactor: { value: 1, min: 1, max: 5, step: 0.1 },
