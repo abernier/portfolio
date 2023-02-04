@@ -16,6 +16,7 @@ import { GSDevTools } from "gsap/GSDevTools";
 import Iphone from "./components/Iphone";
 import {
   forwardRef,
+  memo,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -358,17 +359,14 @@ function Scene() {
           dezoomFactor={dezoomFactor}
         />
       </Iphone>
-
-      <Sparkles
-        count={20}
-        scale={[5, 8, 1]}
-        size={4}
-        rotation-x={-Math.PI / 12}
-        position-y={4}
-      />
+      <Stars rotation-x={-Math.PI / 12} position-y={4} />
     </Layout>
   );
 }
+
+const Stars = memo((props) => (
+  <Sparkles count={20} scale={[5, 8, 1]} size={4} {...props} />
+));
 
 //
 // <CameraFrame>

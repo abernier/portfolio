@@ -142,7 +142,7 @@ export function Model({ children, screenTexture, ...props }: ModelProps) {
               geometry={nodes.screen.geometry}
               // material={nodes.screen.material}
             >
-              <meshStandardMaterial map={screenTexture} color="black" />
+              <meshStandardMaterial map={screenTexture} />
 
               <group position-y={H / 2 + verticalDecay}>{children}</group>
             </mesh>
