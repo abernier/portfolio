@@ -32,6 +32,12 @@ gsap.registerPlugin(GSDevTools);
 // globalThis.THREE = THREE;
 // globalThis.gsap = gsap;
 
+const H = 15.4926;
+
+function clamp(x: number, min: number, max: number) {
+  return Math.min(Math.max(x, min), max);
+}
+
 function App() {
   return (
     <Styled>
@@ -74,9 +80,9 @@ function Scene() {
   } = useControls({
     cameraFrame: folder(
       {
-        y: { value: -5, min: -8, max: 8, step: 1 },
-        h: { value: 5, min: 0.5, max: 15.4926, step: 1 },
-        w: { value: 7, min: 0.5, max: 7, step: 1 },
+        y: { value: 0, min: -H / 2, max: H / 2, step: 0.1 },
+        h: { value: 5, min: 0.5, max: H, step: 0.1 },
+        w: { value: 7, min: 0.5, max: 7, step: 0.1 },
       }
       // { collapsed: true }
     ),
@@ -317,11 +323,13 @@ function Scene() {
 
   let _cameraFrameY = cameraFrameY;
   let _cameraFrameH = cameraFrameH;
-  // if (cameraFrameY + cameraFrameH / 2 > 15.4926 / 2) {
-  //   _cameraFrameY -= cameraFrameY + cameraFrameH / 2 - 15.4926 / 2;
-  // } else if (cameraFrameY - cameraFrameH / 2 < 15.4926 / 2) {
-  //   _cameraFrameY -= cameraFrameY - cameraFrameH / 2 + 15.4926 / 2;
-  // }
+  // limit _cameraFrameH
+  _cameraFrameH = clamp(cameraFrameH, 0, H);
+  console.log(_cameraFrameH);
+  // limit _cameraFrameY
+  const min = -H / 2 + _cameraFrameH / 2;
+  const max = H / 2 - _cameraFrameH / 2;
+  _cameraFrameY = clamp(cameraFrameY, min, max);
 
   return (
     <Layout>

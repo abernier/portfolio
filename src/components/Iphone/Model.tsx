@@ -117,9 +117,6 @@ type ModelProps = JSX.IntrinsicElements["group"] & {
 export function Model({ children, screenTexture, ...props }: ModelProps) {
   const { nodes, materials } = useGLTF(glbUrl) as unknown as GLTFResult;
 
-  // const screenRef = useRef<THREE.Mesh>(null);
-  // globalThis.screenRef = screenRef;
-
   // const size = useMemo(() => {
   //   // compute the size of the screen
   //   const bbox = nodes.screen.geometry.boundingBox;
@@ -130,21 +127,24 @@ export function Model({ children, screenTexture, ...props }: ModelProps) {
   //   return size;
   // }, [nodes.screen.geometry]);
 
+  // const H = size.y
+  const H = 15.4926;
+  const verticalDecay = 0.3;
+
   return (
     <>
       <group {...props} dispose={null}>
         <group rotation={[-Math.PI / 2, 0, 0]}>
           <group rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
             <mesh
-              // ref={screenRef}
               castShadow
               receiveShadow
               geometry={nodes.screen.geometry}
               // material={nodes.screen.material}
             >
-              <meshStandardMaterial map={screenTexture} />
+              <meshStandardMaterial map={screenTexture} color="black" />
 
-              <group position-y={15.4926 / 2}>{children}</group>
+              <group position-y={H / 2 + verticalDecay}>{children}</group>
             </mesh>
             <>
               <mesh
