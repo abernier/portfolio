@@ -60,8 +60,8 @@ export const Styled = styled.div`
 export default App;
 
 function Scene() {
-  const cameraControlsRef = useRef<CameraControls | null>(null);
-  globalThis.cameraControlsRef = cameraControlsRef;
+  const ccRef = useRef<CameraControls | null>(null);
+  globalThis.ccRef = ccRef;
   // const controls = useThree(
   //   (state) => state.controls as unknown as CameraControls
   // );
@@ -104,24 +104,23 @@ function Scene() {
   });
 
   useFrame((_, delta) => {
-    if (!cameraControlsRef.current || !cameraFrameRef.current) return;
+    if (!ccRef.current || !cameraFrameRef.current) return;
 
-    const cameraControls = cameraControlsRef.current;
+    const cc = ccRef.current;
     const cameraFrame = cameraFrameRef.current;
 
-    const d = cameraControls.getDistanceToFitSphere(cameraFrame.bs.radius);
-    const target = cameraFrame.bs.center;
-
     if (fitting) {
+      const d = cc.getDistanceToFitSphere(cameraFrame.bs.radius);
       // update distance (aka. radius)
-      easing.damp(cameraControls._sphericalEnd, "radius", d, 2, delta);
-      cameraControls._spherical.radius = cameraControls._sphericalEnd.radius;
+      easing.damp(cc._sphericalEnd, "radius", d, 2, delta);
+      cc._spherical.radius = cc._sphericalEnd.radius;
     }
 
     if (centering) {
+      const target = cameraFrame.bs.center;
       // update target
-      easing.damp3(cameraControls._targetEnd, target, 1, delta);
-      cameraControls._target.copy(cameraControls._targetEnd);
+      easing.damp3(cc._targetEnd, target, 1, delta);
+      cc._target.copy(cc._targetEnd);
     }
   });
 
@@ -234,8 +233,8 @@ function Scene() {
       //   .call(
       //     () => {
       //       console.log("0");
-      //       // cameraControlsRef.current?.setPosition(4.37, 1.15, 8.42, true);
-      //       cameraControlsRef.current?.setTarget(0.3, 0.72, 0.21, true);
+      //       // ccRef.current?.setPosition(4.37, 1.15, 8.42, true);
+      //       ccRef.current?.setTarget(0.3, 0.72, 0.21, true);
       //     },
       //     ["custom messge"],
       //     0
@@ -243,16 +242,16 @@ function Scene() {
       //   .call(
       //     () => {
       //       console.log("4");
-      //       // cameraControlsRef.current?.setPosition(-10.73, 8.4, 18.62, true);
-      //       cameraControlsRef.current?.setTarget(0, 3, 0, true);
+      //       // ccRef.current?.setPosition(-10.73, 8.4, 18.62, true);
+      //       ccRef.current?.setTarget(0, 3, 0, true);
       //     },
       //     ["custom messge"],
       //     4
       //   )
       //   .call(
       //     () => {
-      //       // cameraControlsRef.current?.setPosition(-6.02, 5.66, 11.06, true);
-      //       cameraControlsRef.current?.setTarget(-0.29, 2.86, -0.12, true);
+      //       // ccRef.current?.setPosition(-6.02, 5.66, 11.06, true);
+      //       ccRef.current?.setTarget(-0.29, 2.86, -0.12, true);
       //     },
       //     ["custom messge"],
       //     8.2
@@ -260,24 +259,24 @@ function Scene() {
 
       //   .call(
       //     () => {
-      //       // cameraControlsRef.current?.setPosition(5.59, 4.61, 12.64, true);
-      //       cameraControlsRef.current?.setTarget(0.27, 1.91, -0.15, true);
+      //       // ccRef.current?.setPosition(5.59, 4.61, 12.64, true);
+      //       ccRef.current?.setTarget(0.27, 1.91, -0.15, true);
       //     },
       //     ["custom messge"],
       //     15.3
       //   )
       //   .call(
       //     () => {
-      //       // cameraControlsRef.current?.setPosition(5.9, 3.63, 12.72, true);
-      //       cameraControlsRef.current?.setTarget(0.49, 3, -0.29, true);
+      //       // ccRef.current?.setPosition(5.9, 3.63, 12.72, true);
+      //       ccRef.current?.setTarget(0.49, 3, -0.29, true);
       //     },
       //     ["custom messge"],
       //     17.8
       //   )
       //   .call(
       //     () => {
-      //       // cameraControlsRef.current?.setPosition(8.16, 3.9, 18.15, true);
-      //       cameraControlsRef.current?.setTarget(0.49, 3, -0.29, true);
+      //       // ccRef.current?.setPosition(8.16, 3.9, 18.15, true);
+      //       ccRef.current?.setTarget(0.49, 3, -0.29, true);
       //     },
       //     ["custom messge"],
       //     24
@@ -317,8 +316,8 @@ function Scene() {
     return () => ctx.revert();
   }, [video]);
 
-  const cameraControlsCallbackRef = useCallback((instance: CameraControls) => {
-    cameraControlsRef.current = instance;
+  const ccCallbackRef = useCallback((instance: CameraControls) => {
+    ccRef.current = instance;
     if (!instance) return;
 
     instance.setTarget(0, 3, 0);
@@ -345,7 +344,7 @@ function Scene() {
   return (
     <Layout>
       <CameraControls
-        ref={cameraControlsCallbackRef}
+        ref={ccCallbackRef}
         smoothTime={1}
         // azimuthRotateSpeed={1}
         // polarRotateSpeed={1}
