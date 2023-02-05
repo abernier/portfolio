@@ -11,7 +11,7 @@ import {
   useState,
 } from "react";
 import { folder, useControls } from "leva";
-import { useIphone } from "./Iphone/Model";
+import { useIphone } from "./Iphone";
 
 const { clamp } = THREE.MathUtils;
 

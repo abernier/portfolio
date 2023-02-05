@@ -119,7 +119,11 @@ interface Api {
 }
 const IphoneContext = createContext<Api>({} as Api);
 
-export function Model({ children, screenTexture, ...props }: ModelProps) {
+export default function Iphone({
+  children,
+  screenTexture,
+  ...props
+}: ModelProps) {
   const { nodes, materials } = useGLTF(glbUrl) as unknown as GLTFResult;
 
   // const size = useMemo(() => {
