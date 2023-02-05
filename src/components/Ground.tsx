@@ -1,7 +1,7 @@
 import { useControls, folder } from "leva";
 
 function Ground({
-  size = 10,
+  size = 25,
   circle = false,
 }: {
   size?: number;

@@ -16,7 +16,7 @@ import { GSDevTools } from "gsap/GSDevTools";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Leva, folder, useControls } from "leva";
 
-import Iphone from "./components/Iphone";
+import Iphone, { useIphone } from "./components/Iphone";
 
 import CameraFrame from "./components/CameraFrame";
 
@@ -318,7 +318,6 @@ function Scene() {
       />
 
       <Iphone
-        scale={40}
         rotation-y={Math.PI}
         rotation-x={iphoneRotX}
         screenTexture={videoTexture}
@@ -329,12 +328,22 @@ function Scene() {
           showBoundingBox={showBoundingBox}
           dezoomFactor={dezoomFactor}
         />
+        <Stars />
       </Iphone>
-      <Stars rotation-x={-Math.PI / 12} position-y={4} />
     </Layout>
   );
 }
 
-const Stars = memo((props) => (
-  <Sparkles count={20} scale={[5, 8, 1]} size={4} {...props} />
-));
+const Stars = memo((props) => {
+  const { screenWidth, screenHeight } = useIphone();
+
+  return (
+    <Sparkles
+      count={20}
+      scale={[screenWidth * 1.2, screenHeight * 1.2, 1]}
+      size={10}
+      position-z={-1.2}
+      {...props}
+    />
+  );
+});

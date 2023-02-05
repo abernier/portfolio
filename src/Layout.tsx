@@ -14,8 +14,8 @@ import Ground from "./components/Ground";
 
 type ArrayVec3 = [number, number, number];
 const INITIALS = {
-  position: [7, 4.0, 21.0] as ArrayVec3,
-  target: [0, 3, 0] as ArrayVec3,
+  position: [20, 20.0, 50.0] as ArrayVec3,
+  target: [0, 7.5, 0] as ArrayVec3,
 };
 
 type LayoutProps = {
@@ -84,7 +84,7 @@ const Layout = ({ children, bg = "#2d334b" }: LayoutProps) => {
       {/* <Environment /> */}
 
       <spotLight
-        position={[15, 15, 15]}
+        position={[35, 35, 35]}
         // angle={0.3}
         penumbra={1}
         castShadow
@@ -105,7 +105,7 @@ const Layout = ({ children, bg = "#2d334b" }: LayoutProps) => {
         />
       )}
 
-      <Ground size={10} circle />
+      <Ground size={25} circle />
       {/* <ContactShadows
         frames={1}
         opacity={1}
