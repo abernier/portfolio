@@ -114,9 +114,9 @@ type ModelProps = JSX.IntrinsicElements["group"] & {
   screenTexture?: THREE.Texture;
 };
 
-interface Api {
+type Api = {
   screenHeight: number;
-}
+};
 const IphoneContext = createContext<Api>({} as Api);
 
 export default function Iphone({

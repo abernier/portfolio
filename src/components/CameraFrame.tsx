@@ -50,7 +50,6 @@ type CameraFrameAPI = {
 const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
   ({ showBoundingBox, showBoundingSphere, dezoomFactor = 1 }, ref) => {
     const { screenHeight: H } = useIphone();
-    console.log("screenHeight", H);
 
     const { y, w, h } = useControls({
       cameraFrame: folder(
@@ -111,7 +110,6 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
     let _h = h;
     // limit _h
     _h = clamp(h, 0, H);
-    console.log(_h);
     // limit _y
     const min = -H / 2 + _h / 2;
     const max = H / 2 - _h / 2;
