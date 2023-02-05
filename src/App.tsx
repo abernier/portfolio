@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import styled from "@emotion/styled";
-import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 
 import Layout from "./Layout";
 import { CameraControls, Sparkles } from "@react-three/drei";
@@ -13,18 +13,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { GSDevTools } from "gsap/GSDevTools";
 
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Leva, folder, useControls } from "leva";
+
 import Iphone from "./components/Iphone";
-import {
-  forwardRef,
-  memo,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { Leva, folder, useControls, button } from "leva";
+
+import CameraFrame from "./components/CameraFrame";
 
 gsap.ticker.remove(gsap.updateRoot); // https://greensock.com/docs/v3/GSAP/gsap.updateRoot()
 gsap.registerPlugin(ScrollTrigger);
@@ -32,12 +26,6 @@ gsap.registerPlugin(GSDevTools);
 
 // globalThis.THREE = THREE;
 // globalThis.gsap = gsap;
-
-const H = 15.4926;
-
-function clamp(x: number, min: number, max: number) {
-  return Math.min(Math.max(x, min), max);
-}
 
 function App() {
   return (
@@ -70,9 +58,6 @@ function Scene() {
   globalThis.cameraFrameRef = cameraFrameRef;
 
   const {
-    y: cameraFrameY,
-    w: cameraFrameW,
-    h: cameraFrameH,
     rotX: iphoneRotX,
     showBoundingSphere,
     showBoundingBox,
@@ -81,14 +66,6 @@ function Scene() {
     dezoomFactor,
     ...gui
   } = useControls({
-    cameraFrame: folder(
-      {
-        y: { value: 0, min: -H / 2, max: H / 2, step: 0.1 },
-        h: { value: 5, min: 0.5, max: H, step: 0.1 },
-        w: { value: 7, min: 0.5, max: 7, step: 0.1 },
-      }
-      // { collapsed: true }
-    ),
     showBoundingSphere: true,
     showBoundingBox: false,
     fitting: true,
@@ -331,16 +308,6 @@ function Scene() {
   //   controls.mouseButtons.wheel = CameraControlsImpl.ACTION.NONE; // disable wheel
   // }, [controls]);
 
-  let _cameraFrameY = cameraFrameY;
-  let _cameraFrameH = cameraFrameH;
-  // limit _cameraFrameH
-  _cameraFrameH = clamp(cameraFrameH, 0, H);
-  console.log(_cameraFrameH);
-  // limit _cameraFrameY
-  const min = -H / 2 + _cameraFrameH / 2;
-  const max = H / 2 - _cameraFrameH / 2;
-  _cameraFrameY = clamp(cameraFrameY, min, max);
-
   return (
     <Layout>
       <CameraControls
@@ -358,9 +325,6 @@ function Scene() {
       >
         <CameraFrame
           ref={cameraFrameRef}
-          y={_cameraFrameY}
-          w={cameraFrameW}
-          h={_cameraFrameH}
           showBoundingSphere={showBoundingSphere}
           showBoundingBox={showBoundingBox}
           dezoomFactor={dezoomFactor}
@@ -374,138 +338,3 @@ function Scene() {
 const Stars = memo((props) => (
   <Sparkles count={20} scale={[5, 8, 1]} size={4} {...props} />
 ));
-
-//
-// <CameraFrame>
-//
-//
-//
-
-type CameraFrameProps = {
-  y?: number;
-  w?: number;
-  h?: number;
-  showBoundingBox: boolean;
-  showBoundingSphere: boolean;
-  dezoomFactor?: number;
-};
-
-// https://stackoverflow.com/a/73748435/133327
-const useForwardRef = <T,>(
-  ref: React.ForwardedRef<T>,
-  initialValue: any = null
-) => {
-  const targetRef = useRef<T>(initialValue);
-
-  useEffect(() => {
-    if (!ref) return;
-
-    if (typeof ref === "function") {
-      ref(targetRef.current);
-    } else {
-      ref.current = targetRef.current;
-    }
-  }, [ref]);
-
-  return targetRef;
-};
-
-type CameraFrameAPI = {
-  box: THREE.Mesh | null;
-  bbox: THREE.Box3;
-  bs: THREE.Sphere;
-};
-
-const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
-  (
-    {
-      y = 0,
-      w = 7,
-      h = 5,
-      showBoundingBox,
-      showBoundingSphere,
-      dezoomFactor = 1,
-    },
-    ref
-  ) => {
-    // const boxRef = useForwardRef(ref);
-    const boxRef = useRef<THREE.Mesh>(null);
-
-    const { scene } = useThree();
-
-    const [bbox] = useState(new THREE.Box3());
-    const [bs] = useState(new THREE.Sphere());
-    const [center] = useState(new THREE.Vector3());
-
-    const boxHelperRef = useRef<THREE.BoxHelper>(null);
-    const sphereRef = useRef<THREE.Mesh>(null);
-    // globalThis.sphereRef = boxRef;
-
-    // https://stackoverflow.com/a/61388453/133327
-    useImperativeHandle(ref, () => ({
-      get box() {
-        return boxRef.current;
-      },
-      get bbox() {
-        return bbox;
-      },
-      get bs() {
-        return bs;
-      },
-    }));
-
-    useFrame(() => {
-      // Compute bbox and bs (from boxRef)
-      if (!boxRef?.current) return; // https://stackoverflow.com/a/62238917/133327
-      bbox.setFromObject(boxRef.current);
-      bbox.getBoundingSphere(bs);
-      bs.radius *= dezoomFactor;
-
-      // Update boxHelper
-      if (boxHelperRef.current) boxHelperRef.current.update();
-
-      // Update our debug sphere (position and scale)
-      if (sphereRef.current) {
-        bbox.getCenter(center);
-        sphereRef.current.position.copy(center);
-        sphereRef.current.scale.setScalar(bs.radius);
-      }
-    });
-
-    return (
-      <group position-y={y}>
-        <mesh ref={boxRef}>
-          <boxGeometry args={[w, h, 1]} />
-          <meshStandardMaterial color="red" wireframe />
-        </mesh>
-
-        {boxRef?.current &&
-          createPortal(
-            <>
-              {/* Bounding box */}
-              {showBoundingBox && (
-                <boxHelper
-                  ref={boxHelperRef}
-                  args={[boxRef.current, 0x0000ff]}
-                />
-              )}
-
-              {/* Bounding sphere */}
-              {showBoundingSphere && (
-                <mesh ref={sphereRef}>
-                  <sphereGeometry args={[1]} />
-                  <meshBasicMaterial
-                    color="#00ff00"
-                    transparent
-                    opacity={0.25}
-                    wireframe
-                  />
-                </mesh>
-              )}
-            </>,
-            scene
-          )}
-      </group>
-    );
-  }
-);
