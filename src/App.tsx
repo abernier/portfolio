@@ -89,8 +89,7 @@ function Scene() {
     if (fitting) {
       const d = cc.getDistanceToFitSphere(cameraFrame.bs.radius);
       // update distance (aka. radius)
-      easing.damp(cc._sphericalEnd, "radius", d, 2, delta);
-      cc._spherical.radius = cc._sphericalEnd.radius;
+      easing.damp(cc, "distance", d, 2, delta);
     }
 
     if (centering) {
