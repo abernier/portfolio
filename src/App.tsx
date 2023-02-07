@@ -67,7 +67,7 @@ function Scene() {
     ...gui
   } = useControls({
     showBoundingSphere: true,
-    showBoundingBox: false,
+    showBoundingBox: true,
     fitting: true,
     centering: true,
     dezoomFactor: { value: 1, min: 1, max: 5, step: 0.1 },

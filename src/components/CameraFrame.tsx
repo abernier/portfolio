@@ -88,10 +88,31 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
       },
     }));
 
+    const needUpdateRef = useRef(true);
+
+    useEffect(() => {
+      if (!boxRef?.current) return;
+      // ensure the bounding box is initially computed for its geometry
+      // boxRef.current.geometry.computeBoundingBox();
+
+      //
+      boxRef.current.updateWorldMatrix(true, false);
+    }, []);
+
     useFrame(() => {
-      // Compute bbox and bs (from boxRef)
-      if (!boxRef?.current) return; // https://stackoverflow.com/a/62238917/133327
+      if (!needUpdateRef.current) return; // only if needed (because computing bounding box is expensive)
+
+      if (!boxRef?.current) return;
+
+      // Compute bbox
       bbox.setFromObject(boxRef.current);
+      // bbox
+      //   .copy(boxRef.current.geometry.boundingBox)
+      //   .applyMatrix4(boxRef.current.matrixWorld);
+
+      needUpdateRef.current = false; // needUpate is now false (since the bbox is computed)
+
+      // Compute bs
       bbox.getBoundingSphere(bs);
       bs.radius *= dezoomFactor;
 
@@ -105,6 +126,11 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
         sphereRef.current.scale.setScalar(bs.radius);
       }
     });
+
+    // Once w or h or y is changed => we needUpdate the bbox
+    useEffect(() => {
+      needUpdateRef.current = true;
+    }, [w, h, y]);
 
     let _y = y;
     let _h = h;
