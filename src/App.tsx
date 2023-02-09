@@ -68,12 +68,14 @@ function Scene() {
     showBoundingBox,
     fitting,
     centering,
+    smoothTime,
     ...gui
   } = useControls({
     showBoundingSphere: true,
     showBoundingBox: true,
     fitting: true,
     centering: true,
+    smoothTime: { value: 1, min: 0, max: 2, step: 0.1 },
 
     gsdevtools: true,
     iphone: folder(
@@ -384,7 +386,7 @@ function Scene() {
     <Layout>
       <CameraControls
         ref={ccCallbackRef}
-        smoothTime={1}
+        smoothTime={smoothTime}
         // azimuthRotateSpeed={1}
         // polarRotateSpeed={1}
       />
