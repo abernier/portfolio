@@ -7,6 +7,8 @@ import { CameraControls, Sparkles, Stats } from "@react-three/drei";
 
 import { easing } from "maath";
 
+import { AngleIcon } from "@radix-ui/react-icons";
+
 // import CameraControlsImpl from "camera-controls";
 
 import gsap from "gsap";
@@ -14,7 +16,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { GSDevTools } from "gsap/GSDevTools";
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Leva, folder, useControls } from "leva";
+import { Leva, folder, useControls, buttonGroup } from "leva";
 
 import Iphone, { useIphone } from "./components/Iphone";
 
@@ -23,6 +25,8 @@ import CameraFrame from "./components/CameraFrame";
 gsap.ticker.remove(gsap.updateRoot); // https://greensock.com/docs/v3/GSAP/gsap.updateRoot()
 gsap.registerPlugin(ScrollTrigger);
 gsap.registerPlugin(GSDevTools);
+
+const { DEG2RAD } = THREE.MathUtils;
 
 // globalThis.THREE = THREE;
 // globalThis.gsap = gsap;
@@ -79,6 +83,75 @@ function Scene() {
       },
       { collapsed: true }
     ),
+    presets: folder({
+      a: { value: 30, min: 0, max: 90, label: "↕️" },
+      b: { value: 45, min: 0, max: 90, label: "↔️" },
+      p1: buttonGroup({
+        label: <AngleIcon />,
+        opts: {
+          tl: (get) =>
+            ccRef.current?.rotateTo(
+              -get("presets.b") * DEG2RAD,
+              (90 - get("presets.a")) * DEG2RAD,
+              true
+            ),
+          tc: (get) =>
+            ccRef.current?.rotateTo(
+              0 * DEG2RAD,
+              (90 - get("presets.a")) * DEG2RAD,
+              true
+            ),
+          tr: (get) =>
+            ccRef.current?.rotateTo(
+              get("presets.b") * DEG2RAD,
+              (90 - get("presets.a")) * DEG2RAD,
+              true
+            ),
+        },
+      }),
+      p2: buttonGroup({
+        label: "",
+        opts: {
+          cl: (get) =>
+            ccRef.current?.rotateTo(
+              -get("presets.b") * DEG2RAD,
+              90 * DEG2RAD,
+              true
+            ),
+          cc: (get) => ccRef.current?.rotateTo(0 * DEG2RAD, 90 * DEG2RAD, true),
+          cr: (get) =>
+            ccRef.current?.rotateTo(
+              get("presets.b") * DEG2RAD,
+              90 * DEG2RAD,
+              true
+            ),
+        },
+      }),
+      p3: buttonGroup({
+        label: "",
+        opts: {
+          bl: (get) =>
+            ccRef.current?.rotateTo(
+              -get("presets.b") * DEG2RAD,
+              (90 + get("presets.a")) * DEG2RAD,
+              true
+            ),
+          bc: (get) =>
+            ccRef.current?.rotateTo(
+              0 * DEG2RAD,
+              (90 + get("presets.a")) * DEG2RAD,
+              true
+            ),
+
+          br: (get) =>
+            ccRef.current?.rotateTo(
+              get("presets.b") * DEG2RAD,
+              (90 + get("presets.a")) * DEG2RAD,
+              true
+            ),
+        },
+      }),
+    }),
   });
 
   useFrame((_, delta) => {
