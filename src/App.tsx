@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { Canvas, useFrame } from "@react-three/fiber";
 
 import Layout from "./Layout";
-import { CameraControls, Sparkles } from "@react-three/drei";
+import { CameraControls, Sparkles, Stats } from "@react-three/drei";
 
 import { easing } from "maath";
 
@@ -38,6 +38,7 @@ function App() {
       <Leva
       // collapsed={true}
       />
+      <Stats />
     </Styled>
   );
 }
