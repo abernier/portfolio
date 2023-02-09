@@ -89,8 +89,6 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
       },
     }));
 
-    const needUpdateRef = useRef(true);
-
     useEffect(() => {
       if (!boxRef?.current) return;
       // ensure the bounding box is initially computed for its geometry
@@ -101,8 +99,6 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
     }, []);
 
     useFrame(() => {
-      if (!needUpdateRef.current) return; // only if needed (because computing bounding box is expensive)
-
       if (!boxRef?.current) return;
 
       // Compute bbox
@@ -110,8 +106,6 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
       // bbox
       //   .copy(boxRef.current.geometry.boundingBox)
       //   .applyMatrix4(boxRef.current.matrixWorld);
-
-      needUpdateRef.current = false; // needUpate is now false (since the bbox is computed)
 
       // Compute bs
       bbox.getBoundingSphere(bs);
@@ -127,11 +121,6 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
         sphereRef.current.scale.setScalar(bs.radius);
       }
     });
-
-    // Once w or h or y is changed => we needUpdate the bbox
-    useEffect(() => {
-      needUpdateRef.current = true;
-    }, [w, h, x, y, dezoomFactor]);
 
     let _x = x;
     let _y = y;
@@ -154,7 +143,7 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
     return (
       <group position-x={-_x} position-y={_y}>
         <mesh ref={boxRef}>
-          <boxGeometry args={[w, _h, 1]} />
+          <boxGeometry args={[_w, _h, 1]} />
           <meshStandardMaterial color="red" wireframe />
         </mesh>
 
