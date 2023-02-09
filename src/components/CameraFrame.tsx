@@ -48,14 +48,15 @@ type CameraFrameAPI = {
 
 const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
   ({ showBoundingBox, showBoundingSphere }, ref) => {
-    const { screenHeight: H } = useIphone();
+    const { screenHeight: H, screenWidth: W } = useIphone();
 
-    const { y, w, h, dezoomFactor } = useControls({
+    const { x, y, w, h, dezoomFactor } = useControls({
       cameraFrame: folder(
         {
-          y: { value: 0, min: -H / 2, max: H / 2, step: 0.1 },
+          w: { value: W, min: 0.5, max: W, step: 0.1 },
           h: { value: 5, min: 0.5, max: H, step: 0.1 },
-          w: { value: 7, min: 0.5, max: 7, step: 0.1 },
+          x: { value: 0, min: -W / 2, max: W / 2, step: 0.1 },
+          y: { value: 0, min: -H / 2, max: H / 2, step: 0.1 },
           dezoomFactor: { value: 1, min: 1, max: 5, step: 0.1 },
         }
         // { collapsed: true }
@@ -130,19 +131,28 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
     // Once w or h or y is changed => we needUpdate the bbox
     useEffect(() => {
       needUpdateRef.current = true;
-    }, [w, h, y, dezoomFactor]);
+    }, [w, h, x, y, dezoomFactor]);
 
+    let _x = x;
     let _y = y;
+    let _w = w;
     let _h = h;
+    // limit _w
+    _w = clamp(w, 0, W);
     // limit _h
     _h = clamp(h, 0, H);
+    // limit _x
+    const minx = -W / 2 + _w / 2;
+    const maxx = W / 2 - _w / 2;
+    _x = clamp(x, minx, maxx);
+    console.log("_x", _x);
     // limit _y
-    const min = -H / 2 + _h / 2;
-    const max = H / 2 - _h / 2;
-    _y = clamp(y, min, max);
+    const miny = -H / 2 + _h / 2;
+    const maxy = H / 2 - _h / 2;
+    _y = clamp(y, miny, maxy);
 
     return (
-      <group position-y={_y}>
+      <group position-x={-_x} position-y={_y}>
         <mesh ref={boxRef}>
           <boxGeometry args={[w, _h, 1]} />
           <meshStandardMaterial color="red" wireframe />

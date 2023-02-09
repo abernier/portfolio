@@ -84,7 +84,7 @@ function Scene() {
     ),
     presets: folder({
       a: { value: 30, min: 0, max: 90, label: "↕️" },
-      b: { value: 45, min: 0, max: 90, label: "↔️" },
+      b: { value: 30, min: 0, max: 90, label: "↔️" },
       p1: buttonGroup({
         label: <AngleIcon />,
         opts: {
