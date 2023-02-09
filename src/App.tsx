@@ -64,15 +64,11 @@ function Scene() {
 
   const {
     rotX: iphoneRotX,
-    showBoundingSphere,
-    showBoundingBox,
     fitting,
     centering,
     smoothTime,
     ...gui
   } = useControls({
-    showBoundingSphere: true,
-    showBoundingBox: true,
     fitting: true,
     centering: true,
     smoothTime: { value: 1, min: 0, max: 2, step: 0.1 },
@@ -396,11 +392,7 @@ function Scene() {
         rotation-x={iphoneRotX}
         screenTexture={videoTexture}
       >
-        <CameraFrame
-          ref={cameraFrameRef}
-          showBoundingSphere={showBoundingSphere}
-          showBoundingBox={showBoundingBox}
-        />
+        <CameraFrame ref={cameraFrameRef} />
         <Stars />
       </Iphone>
     </Layout>
