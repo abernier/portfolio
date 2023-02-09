@@ -18,7 +18,6 @@ const { clamp } = THREE.MathUtils;
 type CameraFrameProps = {
   showBoundingBox: boolean;
   showBoundingSphere: boolean;
-  dezoomFactor?: number;
 };
 
 // https://stackoverflow.com/a/73748435/133327
@@ -48,15 +47,16 @@ type CameraFrameAPI = {
 };
 
 const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
-  ({ showBoundingBox, showBoundingSphere, dezoomFactor = 1 }, ref) => {
+  ({ showBoundingBox, showBoundingSphere }, ref) => {
     const { screenHeight: H } = useIphone();
 
-    const { y, w, h } = useControls({
+    const { y, w, h, dezoomFactor } = useControls({
       cameraFrame: folder(
         {
           y: { value: 0, min: -H / 2, max: H / 2, step: 0.1 },
           h: { value: 5, min: 0.5, max: H, step: 0.1 },
           w: { value: 7, min: 0.5, max: 7, step: 0.1 },
+          dezoomFactor: { value: 1, min: 1, max: 5, step: 0.1 },
         }
         // { collapsed: true }
       ),
@@ -130,7 +130,7 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>(
     // Once w or h or y is changed => we needUpdate the bbox
     useEffect(() => {
       needUpdateRef.current = true;
-    }, [w, h, y]);
+    }, [w, h, y, dezoomFactor]);
 
     let _y = y;
     let _h = h;

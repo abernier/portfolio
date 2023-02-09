@@ -68,14 +68,13 @@ function Scene() {
     showBoundingBox,
     fitting,
     centering,
-    dezoomFactor,
     ...gui
   } = useControls({
     showBoundingSphere: true,
     showBoundingBox: true,
     fitting: true,
     centering: true,
-    dezoomFactor: { value: 1, min: 1, max: 5, step: 0.1 },
+
     gsdevtools: true,
     iphone: folder(
       {
@@ -399,7 +398,6 @@ function Scene() {
           ref={cameraFrameRef}
           showBoundingSphere={showBoundingSphere}
           showBoundingBox={showBoundingBox}
-          dezoomFactor={dezoomFactor}
         />
         <Stars />
       </Iphone>
