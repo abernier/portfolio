@@ -9,7 +9,7 @@ import { useGLTF } from "@react-three/drei";
 import { GLTF } from "three-stdlib";
 import { createContext, useContext, useMemo } from "react";
 
-const glbUrl = new URL("/iphone14promax.glb", import.meta.url).href;
+const glbUrl = new URL("/iphone14promax-transformed.glb", import.meta.url).href;
 
 type GLTFResult = GLTF & {
   nodes: {
