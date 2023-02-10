@@ -34,9 +34,7 @@ const { DEG2RAD } = THREE.MathUtils;
 function App() {
   return (
     <Styled>
-      <Canvas
-      // shadows
-      >
+      <Canvas shadows>
         <Scene />
       </Canvas>
       <Leva
