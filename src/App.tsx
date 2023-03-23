@@ -18,7 +18,8 @@ import { GSDevTools } from "gsap/GSDevTools";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Leva, folder, useControls, buttonGroup } from "leva";
 
-import Iphone, { useIphone } from "./components/Iphone";
+// import Iphone, { useIphone } from "./components/Iphone";
+import Glassphone, { useGlassphone } from "./components/Glassphone";
 
 import CameraFrame, { type CameraFrameAPI } from "./components/CameraFrame";
 
@@ -61,7 +62,7 @@ function Scene() {
   globalThis.cameraFrameRef = cameraFrameRef;
 
   const {
-    rotX: iphoneRotX,
+    rotX: phoneRotX,
     fitting,
     centering,
     smoothTime,
@@ -72,7 +73,7 @@ function Scene() {
     smoothTime: { value: 1, min: 0, max: 2, step: 0.1 },
 
     gsdevtools: true,
-    iphone: folder(
+    phone: folder(
       {
         rotX: { value: -Math.PI / 12, min: -Math.PI / 2, max: 0 },
       },
@@ -385,20 +386,20 @@ function Scene() {
         // polarRotateSpeed={1}
       />
 
-      <Iphone
+      <Glassphone
         rotation-y={Math.PI}
-        rotation-x={iphoneRotX}
+        rotation-x={phoneRotX}
         screenTexture={videoTexture}
       >
         <CameraFrame ref={cameraFrameRef} />
         {/* <Stars /> */}
-      </Iphone>
+      </Glassphone>
     </Layout>
   );
 }
 
 const Stars = memo((props) => {
-  const { screenWidth, screenHeight } = useIphone();
+  const { screenWidth, screenHeight } = useGlassphone();
 
   return (
     <Sparkles

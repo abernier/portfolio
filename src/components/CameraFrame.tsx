@@ -11,7 +11,7 @@ import {
   useState,
 } from "react";
 import { folder, useControls } from "leva";
-import { useIphone } from "./Iphone";
+import { useGlassphone } from "./Glassphone";
 
 const { clamp } = THREE.MathUtils;
 
@@ -44,7 +44,7 @@ export type CameraFrameAPI = {
 };
 
 const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>((_, ref) => {
-  const { screenHeight: H, screenWidth: W } = useIphone();
+  const { screenHeight: H, screenWidth: W } = useGlassphone();
 
   const { x, y, w, h, dezoomFactor, showBoundingBox, showBoundingSphere } =
     useControls({
