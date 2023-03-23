@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { Canvas, useFrame } from "@react-three/fiber";
 
 import Layout from "./Layout";
-import { CameraControls, Sparkles, Stats } from "@react-three/drei";
+import { CameraControls, RoundedBox, Sparkles, Stats } from "@react-three/drei";
 
 import { easing } from "maath";
 
@@ -20,7 +20,7 @@ import { Leva, folder, useControls, buttonGroup } from "leva";
 
 import Iphone, { useIphone } from "./components/Iphone";
 
-import CameraFrame, {type CameraFrameAPI} from "./components/CameraFrame";
+import CameraFrame, { type CameraFrameAPI } from "./components/CameraFrame";
 
 gsap.ticker.remove(gsap.updateRoot); // https://greensock.com/docs/v3/GSAP/gsap.updateRoot()
 gsap.registerPlugin(ScrollTrigger);

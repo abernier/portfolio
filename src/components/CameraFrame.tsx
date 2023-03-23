@@ -55,8 +55,8 @@ const CameraFrame = forwardRef<CameraFrameAPI, CameraFrameProps>((_, ref) => {
           x: { value: 0, min: -W / 2, max: W / 2, step: 0.1 },
           y: { value: 0, min: -H / 2, max: H / 2, step: 0.1 },
           dezoomFactor: { value: 1, min: 1, max: 5, step: 0.1 },
-          showBoundingSphere: true,
-          showBoundingBox: true,
+          showBoundingSphere: false,
+          showBoundingBox: false,
         }
         // { collapsed: true }
       ),
