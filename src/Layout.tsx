@@ -5,6 +5,7 @@ import {
   Grid,
   PerspectiveCamera,
   Environment,
+  EnvironmentProps,
   AccumulativeShadows,
   RandomizedLight,
   Sphere,
@@ -162,7 +163,7 @@ export default Layout;
 
 // see https://codesandbox.io/s/environment-blur-and-transitions-forked-lgcrzw
 function Env() {
-  const [preset, setPreset] = useState("studio");
+  const [preset, setPreset] = useState<EnvironmentProps["preset"]>("studio");
   // You can use the "inTransition" boolean to react to the loading in-between state,
   // For instance by showing a message
   const [inTransition, startTransition] = useTransition();
