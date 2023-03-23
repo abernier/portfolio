@@ -1,8 +1,7 @@
 import * as THREE from "three";
-import { createContext, useContext, useRef, useLayoutEffect } from "react";
+import { createContext, useContext } from "react";
 import { RoundedBox, Plane, MeshTransmissionMaterial } from "@react-three/drei";
 import { folder, useControls } from "leva";
-import { toCreasedNormals } from "three-stdlib/utils/BufferGeometryUtils";
 
 const { DEG2RAD } = THREE.MathUtils;
 
@@ -22,8 +21,6 @@ export default function Glassphone({
   screenTexture,
   ...props
 }: ModelProps) {
-  const roundedBoxRef = useRef<THREE.Mesh>(null);
-
   const W = 7.1126;
   const H = 15.4926;
   const D = 1;
@@ -58,17 +55,10 @@ export default function Glassphone({
     ),
   });
 
-  useLayoutEffect(() => {
-    if (roundedBoxRef.current) {
-      toCreasedNormals(roundedBoxRef.current.geometry, 0.4); // // see: https://codesandbox.io/s/roundedbox-smooth-forked-y6291z?file=/src/App.js:1619-1677
-    }
-  }, []);
-
   return (
     <GlassphoneContext.Provider value={api}>
       <group {...props} dispose={null}>
         <RoundedBox
-          ref={roundedBoxRef}
           args={[W, H, D]}
           radius={Math.min(D / 2, 0.5)}
           smoothness={4}
