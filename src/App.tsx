@@ -391,7 +391,7 @@ function Scene() {
         screenTexture={videoTexture}
       >
         <CameraFrame ref={cameraFrameRef} />
-        <Stars />
+        {/* <Stars /> */}
       </Iphone>
     </Layout>
   );

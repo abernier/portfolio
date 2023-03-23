@@ -156,6 +156,7 @@ export default function Iphone({
 
   const api = { screenWidth: W, screenHeight: H };
 
+  // MTM: https://github.com/pmndrs/drei#meshtransmissionmaterial
   const mtmConfig = useControls({
     "iphone.MTM": folder(
       {
@@ -173,10 +174,10 @@ export default function Iphone({
         distortion: { value: 0.0, min: 0, max: 1, step: 0.01 },
         distortionScale: { value: 0, min: 0.01, max: 1, step: 0.01 },
         temporalDistortion: { value: 0.5, min: 0, max: 1, step: 0.01 },
-        clearcoat: { value: 1, min: 0, max: 1 },
+        clearcoat: { value: 0, min: 0, max: 1 },
         attenuationDistance: { value: 0.5, min: 0, max: 10, step: 0.01 },
         attenuationColor: "#ffffff",
-        // color: "#c9ffa1",
+        color: "#ffffff",
         // bg: "#839681",
       }
       // { collapsed: true }
