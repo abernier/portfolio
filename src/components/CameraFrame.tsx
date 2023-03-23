@@ -37,7 +37,7 @@ const useForwardRef = <T,>(
   return targetRef;
 };
 
-type CameraFrameAPI = {
+export type CameraFrameAPI = {
   box: THREE.Mesh | null;
   bbox: THREE.Box3;
   bs: THREE.Sphere;
